@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 
 import { data, getItemImage } from "../data/listings";
 import { requests } from "../data/asks";
-import { searchForItem } from "../(tabs)/search";
+import { searchForItem } from "./search";
 
 // TODO: create more centralized Item & QuickAsk type to avoid errors
 type Item = {

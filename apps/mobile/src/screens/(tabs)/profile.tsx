@@ -9,7 +9,7 @@ import {
   Alert
 } from 'react-native';
 import { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/auth-context';
+import { useAuth } from '../../contexts/auth-context';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 

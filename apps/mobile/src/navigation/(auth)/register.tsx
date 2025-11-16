@@ -15,7 +15,7 @@ import { Picker } from '@react-native-picker/picker';
 import { router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 
-import { DORMS } from "../../constants/Dorms";
+import { DORMS } from "../../../constants/Dorms";
 
 const register = () => {
   const [firstName, setFirstName] = useState('');

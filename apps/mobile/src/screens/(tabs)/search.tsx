@@ -1,7 +1,7 @@
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native'
 import { useState } from 'react'
 
-import { useAuth } from '../contexts/auth-context';
+import { useAuth } from '../../contexts/auth-context';
 import { router } from 'expo-router';
 
 const Search = () => {

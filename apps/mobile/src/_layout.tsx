@@ -10,7 +10,6 @@ import { ActivityIndicator, View, Text, StyleSheet } from 'react-native';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { AuthProvider, useAuth } from './contexts/auth-context';
 
-import SupabaseTest from '../components/SupabaseTest';
 
 // Loading screen component
 // TODO: make loading screen cuter... consult Meggy(?)

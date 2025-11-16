@@ -13,7 +13,7 @@ import {
 import { useLocalSearchParams, router } from 'expo-router';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 
-import { useAuth } from '../contexts/auth-context';
+import { useAuth } from '../../contexts/auth-context';
 
 const { width: screenWidth } = Dimensions.get('window');
 
