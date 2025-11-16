@@ -72,7 +72,7 @@ const login = () => {
         // Navigation will be handled automatically by the auth context
         // The app will re-render and show the authenticated screens
         // Navigate to main app
-        router.replace('/(tabs)');
+        router.replace('../../screens/(tabs)');
         
       } else if (response.status === 403) {
         // User exists but is not verified

@@ -2,7 +2,7 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, TextInput } from 
 import React from 'react'
 import { useRouter } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
-import { requests } from "../data/asks" // Adjust path as needed
+import { requests } from "../../sample_data/asks" // Adjust path as needed
 
 // TODO: each user can only have 1 ask to reduce data
 type Ask = {

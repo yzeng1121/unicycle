@@ -2,7 +2,7 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image } from 'rea
 import React from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
-import { data, getItemImage } from "../data/listings" // Adjust path as needed
+import { data, getItemImage } from "../../sample_data/listings" // Adjust path as needed
 
 type Item = {
   id: string;        
@@ -27,7 +27,6 @@ const ProductGrid = () => {
           style={styles.productImage}
           source={getItemImage(item, 0)}
         />
-        {/* TODO: save to some file/data thing when pressed */}
         <TouchableOpacity style={styles.bookmarkButton}>
           <Ionicons name="bookmark-outline" size={16} color="#000" />
         </TouchableOpacity>
@@ -61,10 +60,10 @@ const ProductGrid = () => {
         </TouchableOpacity>
       </View>
 
-      {/* TODO: make it so that "NEAR BY YOU" is not another header (clutter) */}
+      {/* TODO: make it so that "SUGGESTED" is not another header (clutter) */}
       {/* Title and Sort Section */}
       <View style={styles.titleSection}>
-        <Text style={styles.headerTitle}>NEAR BY YOU</Text>
+        <Text style={styles.headerTitle}>SUGGESTED</Text>
         <TouchableOpacity style={styles.sortButton}>
           <Ionicons name="swap-vertical" size={20} color="#000" />
           <Text style={styles.sortText}>Sort by</Text>

@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { ActivityIndicator, View, Text, StyleSheet } from 'react-native';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { AuthProvider, useAuth } from './contexts/auth-context';
+import { AuthProvider, useAuth } from './navigation/contexts/auth-context';
 
 
 // Loading screen component
@@ -40,10 +40,10 @@ const AppNavigation: React.FC = () => {
       console.log('🚀 Auth check complete, navigating...');
       if (isAuthenticated) {
         console.log('🎯 Navigating to tabs');
-        router.replace('/(tabs)');
+        router.replace('/screens/(tabs)');
       } else {
         console.log('🎯 Navigating to register');
-        router.replace('/(auth)/register');
+        router.replace('/navigation/(auth)/register');
       }
     }
   }, [isAuthenticated, isLoading]);
@@ -74,7 +74,7 @@ const AppNavigation: React.FC = () => {
 const RootLayout: React.FC = () => {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    // SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
   if (!loaded) {
@@ -85,8 +85,7 @@ const RootLayout: React.FC = () => {
   return (
     <AuthProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        {/* <AppNavigation /> */}
-        <SupabaseTest />
+        <AppNavigation />
         <StatusBar style="auto" />
       </ThemeProvider>
     </AuthProvider>

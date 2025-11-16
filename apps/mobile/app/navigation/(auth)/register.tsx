@@ -15,7 +15,7 @@ import { Picker } from '@react-native-picker/picker';
 import { router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 
-import { DORMS } from "../../../constants/Dorms";
+import { DORMS } from "../../constants/Dorms";
 
 const register = () => {
   const [firstName, setFirstName] = useState('');
@@ -130,7 +130,7 @@ const register = () => {
 
         // Navigate to verification screen
         router.replace({
-          pathname: '/(auth)/verification',
+          pathname: '/verification',
           params: { email: email }
         });
       } else if (response.status === 403) {
