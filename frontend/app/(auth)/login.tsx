@@ -2,7 +2,6 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert 
 import { useState, useEffect } from 'react';
 import { router } from 'expo-router';
 import { useAuth } from '../contexts/auth-context';
-import { supabase } from '../lib/supabaseClient';
 
 import * as SecureStore from 'expo-secure-store';
 
@@ -12,18 +11,6 @@ const login = () => {
   const [isLoading, setIsLoading] = useState(false);
   
   const { login: authLogin } = useAuth();
-
-  useEffect(() => {
-    const testSupabase = async () => {
-      const { data, error } = await supabase
-        .from('users')
-        .select('count')
-      
-      console.log('✅ Supabase test:', { data, error })
-    }
-    
-    testSupabase()
-  }, [])
 
   // TODO: backend already has an isValid function
   // Function to verify token format (basic JWT check)

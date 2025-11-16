@@ -10,10 +10,13 @@ import { ActivityIndicator, View, Text, StyleSheet } from 'react-native';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { AuthProvider, useAuth } from './contexts/auth-context';
 
+import SupabaseTest from '../components/SupabaseTest';
+
 // Loading screen component
 // TODO: make loading screen cuter... consult Meggy(?)
 // TODO: why tf is the first screen the index screen
 // TODO: when creating fresh app start ('i' cmd), navigation defaults to auth flow??
+
 const LoadingScreen: React.FC = () => (
   <View style={styles.loadingContainer}>
     <ActivityIndicator size="large" color="#007AFF" />
@@ -83,7 +86,8 @@ const RootLayout: React.FC = () => {
   return (
     <AuthProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <AppNavigation />
+        {/* <AppNavigation /> */}
+        <SupabaseTest />
         <StatusBar style="auto" />
       </ThemeProvider>
     </AuthProvider>
