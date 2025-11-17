@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.unicycle.auth.entity.User;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -105,9 +106,12 @@ public class JwtService {
         }
         return "refresh".equals(extractTokenType(token));
     }
-    
+
+    // TODO: is this change ok for security reasons?
     private Key getSignInKey() {
-        byte[] keyBytes = java.util.Base64.getDecoder().decode(secretKey);
+        // byte[] keyBytes = java.util.Base64.getDecoder().decode(secretKey);
+        // return Keys.hmacShaKeyFor(keyBytes);
+        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

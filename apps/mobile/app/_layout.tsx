@@ -2,13 +2,13 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+// import 'react-native-reanimated';
 import React from 'react';
 import { useEffect } from 'react';
 import { ActivityIndicator, View, Text, StyleSheet } from 'react-native';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { AuthProvider, useAuth } from './navigation/contexts/auth-context';
+import { AuthProvider, useAuth } from './contexts/auth-context';
 
 
 // Loading screen component
@@ -40,10 +40,10 @@ const AppNavigation: React.FC = () => {
       console.log('🚀 Auth check complete, navigating...');
       if (isAuthenticated) {
         console.log('🎯 Navigating to tabs');
-        router.replace('/screens/(tabs)');
+        router.replace('/(tabs)');
       } else {
         console.log('🎯 Navigating to register');
-        router.replace('/navigation/(auth)/register');
+        router.replace('/(auth)/register');
       }
     }
   }, [isAuthenticated, isLoading]);
