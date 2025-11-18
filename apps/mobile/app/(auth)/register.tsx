@@ -17,6 +17,8 @@ import * as SecureStore from 'expo-secure-store';
 
 import { DORMS } from "../constants/Dorms";
 
+// TODO: registration -> login pipeline DOES NOT work
+
 const register = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
