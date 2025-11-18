@@ -11,11 +11,11 @@ import {
   Platform
 } from 'react-native';
 import { useState } from 'react';
-import { Picker } from '@react-native-picker/picker';
 import { router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 
 import { DORMS } from "../constants/Dorms";
+import { Dropdown } from '@/components/ui/Dropdown';
 
 // TODO: registration -> login pipeline DOES NOT work
 
@@ -29,11 +29,7 @@ const register = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Modal state
-  const [modalVisible, setModalVisible] = useState(false);
-  const [tempSelectedDorm, setTempSelectedDorm] = useState('');
-
-  // Function to store tokens securely
+  // store tokens securely
   const storeTokens = async (accessToken: string, refreshToken: string) => {
     try {
       await SecureStore.setItemAsync('accessToken', accessToken);
@@ -43,20 +39,20 @@ const register = () => {
     }
   };
 
-  // Function to verify token format (basic JWT check)
+  // verify token format (basic JWT check)
   const isValidJWT = (token: string) => {
     if (!token) return false;
     const parts = token.split('.');
     return parts.length === 3;
   };
 
-  // Validate username (only alphanumeric and underscores)
+  // validate username
   const isValidUsername = (username: string) => {
     const usernameRegex = /^[a-zA-Z0-9_.]+$/;
     return usernameRegex.test(username) && username.length >= 3;
   };
 
-  // Password strength validation
+  // password strength validation
   const isValidPassword = (password: string) => {
     return password.length >= 8;
   };
@@ -65,7 +61,7 @@ const register = () => {
     console.log("State:", {
       firstName, lastName, selectedDorm, email, username, password, confirmPassword
     });
-    // Basic validation
+
     if (
       !firstName || 
       !lastName || 
@@ -122,38 +118,30 @@ const register = () => {
       const responseData = await response.json();
 
       if (response.status === 200) {
-        // Check if tokens are provided (some systems send tokens immediately)
         if (responseData.accessToken && responseData.refreshToken) {
-          // Validate token format
           if (isValidJWT(responseData.accessToken) && isValidJWT(responseData.refreshToken)) {
-            // Store tokens securely
             await storeTokens(responseData.accessToken, responseData.refreshToken);
           }
         }
 
         Alert.alert('Success', 'Account created successfully! Please check your email for verification.');
 
-        // Navigate to verification screen
         router.replace({
           pathname: '/verification',
           params: { email: email }
         });
-      } else if (response.status === 403) {
-        // User exists but is not verified
+      } else if (response.status === 403) { // user exists, not verified
         Alert.alert('Account Not Verified', 'Please check your email for the verification code.');
         router.replace({
           pathname: "/verification",
           params: { email: email }
         });
       } else if (response.status === 409) {
-        // User already exists
         Alert.alert('Error', 'An account with this email or username already exists.');
       } else if (response.status === 400) {
-        // Bad request - validation errors
         const errorMessage = responseData.message || 'Please check your input and try again.';
         Alert.alert('Error', errorMessage);
       } else {
-        // Handle other error responses
         const errorMessage = responseData.message || 'Registration failed. Please try again.';
         Alert.alert('Error', errorMessage);
       }
@@ -165,23 +153,6 @@ const register = () => {
     }
   };
 
-  // Modal handlers
-  const openDormPicker = () => {
-    if (isLoading) return;
-    setTempSelectedDorm(selectedDorm);
-    setModalVisible(true);
-  };
-
-  const confirmDormSelection = () => {
-    setSelectedDorm(tempSelectedDorm);
-    setModalVisible(false);
-  };
-
-  const cancelDormSelection = () => {
-    setTempSelectedDorm(selectedDorm);
-    setModalVisible(false);
-  };
-
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -189,15 +160,13 @@ const register = () => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
     >
       <ScrollView
-        // style={styles.scrollView}
-        // keyboardShouldPersistTaps="handled"
         keyboardShouldPersistTaps="always"
         contentContainerStyle={{ paddingBottom: 40, flexGrow: 1 }}
       >
         <View style={styles.content}>
           <Text style={styles.title}>Create Account</Text>
           
-          {/* First Name */}
+          {/* first name */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>First Name *</Text>
             <TextInput
@@ -210,7 +179,7 @@ const register = () => {
             />
           </View>
 
-          {/* Last Name */}
+          {/* last name */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Last Name *</Text>
             <TextInput
@@ -223,22 +192,18 @@ const register = () => {
             />
           </View>
 
-          {/* Dorm Selection */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Dorm *</Text>
-            <TouchableOpacity 
-              style={[styles.dormButton, isLoading && styles.dormButtonDisabled]} 
-              onPress={openDormPicker}
-              disabled={isLoading}
-            >
-              <Text style={styles.dormButtonText}>
-                {selectedDorm || 'Select a dorm'}
-              </Text>
-              <Text style={styles.dormButtonArrow}>▼</Text>
-            </TouchableOpacity>
-          </View>
+          {/* dorm */}
+          <Dropdown
+            label="Dorm"
+            placeholder="Select a dorm"
+            value={selectedDorm}
+            onValueChange={setSelectedDorm}
+            options={DORMS}
+            required={true}
+            maxHeight={250}
+          />
 
-          {/* School Email */}
+          {/* school email */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>School Email *</Text>
             <TextInput
@@ -253,7 +218,7 @@ const register = () => {
             />
           </View>
 
-          {/* Username */}
+          {/* username */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Username *</Text>
             <TextInput
@@ -267,7 +232,7 @@ const register = () => {
             />
           </View>
 
-          {/* Password */}
+          {/* password */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Password *</Text>
             <TextInput
@@ -282,7 +247,7 @@ const register = () => {
             />
           </View>
 
-          {/* Confirm Password */}
+          {/* confirm password */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Confirm Password *</Text>
             <TextInput
@@ -298,7 +263,7 @@ const register = () => {
           </View>
 
 
-          {/* Register Button */}
+          {/* register button */}
           <TouchableOpacity
             style={[styles.registerButton, isLoading && styles.registerButtonDisabled]}
             onPress={handleRegister}
@@ -311,7 +276,7 @@ const register = () => {
           </TouchableOpacity>
           
 
-          {/* Login Link */}
+          {/* login link */}
           <TouchableOpacity
             style={styles.loginLink}
             onPress={() => {
@@ -325,43 +290,6 @@ const register = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-
-      {/* Modal for Dorm Selection */}
-      {modalVisible && (
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={cancelDormSelection}
-        >
-          <View pointerEvents="box-none" style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              {/* Modal Header */}
-              <View style={styles.modalHeader}>
-                <TouchableOpacity onPress={cancelDormSelection}>
-                  <Text style={styles.cancelButton}>Cancel</Text>
-                </TouchableOpacity>
-                <Text style={styles.modalTitle}>Select Dorm</Text>
-                <TouchableOpacity onPress={confirmDormSelection}>
-                  <Text style={styles.doneButton}>Done</Text>
-                </TouchableOpacity>
-              </View>
-              
-              {/* Picker */}
-              <Picker
-                selectedValue={tempSelectedDorm}
-                onValueChange={setTempSelectedDorm}
-                style={styles.modalPicker}
-              >
-                <Picker.Item label="Select a dorm" value="" />
-                {DORMS.map((dorm, index) => (
-                  <Picker.Item key={index} label={dorm} value={dorm} />
-                ))}
-              </Picker>
-            </View>
-          </View>
-        </Modal>
-      )}
     </KeyboardAvoidingView>
   );
 };
@@ -369,7 +297,7 @@ const register = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f5f9f1',
   },
   scrollView: {
     flex: 1,
@@ -383,7 +311,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 30,
-    color: '#333',
+    color: '#1b0c0cff',
   },
   inputGroup: {
     marginBottom: 20,
@@ -424,11 +352,21 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   registerButton: {
-    backgroundColor: '#007AFF',
-    borderRadius: 8,
-    padding: 15,
+    backgroundColor: '#9daa72ff',
+    width: '100%',
+    height: 55,
+    borderRadius: 27.5,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   registerButtonDisabled: {
     backgroundColor: '#cccccc',
@@ -443,46 +381,46 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   loginLinkText: {
-    color: '#007AFF',
+    color: '#383d24ff',
     fontSize: 16,
   },
-  // Modal styles
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    maxHeight: '50%',
-  },
-  modalHeader: {
+  dropdown: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderWidth: 2,
+    borderColor: '#333',
+    borderRadius: 8,
+    padding: 15,
   },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+  dropdownText: {
+    fontSize: 16,
+    color: '#666',
+  },
+  dropdownArrow: {
+    fontSize: 12,
     color: '#333',
   },
-  cancelButton: {
-    fontSize: 16,
-    color: '#007AFF',
+  dropdownOptions: {
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    right: 0,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 2,
+    borderColor: '#333',
+    borderRadius: 8,
+    zIndex: 1000,
+    marginTop: 2,
   },
-  doneButton: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#007AFF',
+  dropdownOption: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
   },
-  modalPicker: {
-    height: 200,
+  dropdownOptionText: {
+    fontSize: 16,
+    color: '#333',
   },
 });
 

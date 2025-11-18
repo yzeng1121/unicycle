@@ -3,8 +3,6 @@ import { useState, useEffect } from 'react';
 import { router } from 'expo-router';
 import { useAuth } from '../contexts/auth-context';
 
-import * as SecureStore from 'expo-secure-store';
-
 const login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,7 +11,8 @@ const login = () => {
   const { login: authLogin } = useAuth();
 
   // TODO: backend already has an isValid function
-  // Function to verify token format (basic JWT check)
+
+  // verify token format (basic JWT check)
   const isValidJWT = (token: string) => {
     if (!token) return false;
     const parts = token.split('.');
@@ -21,7 +20,6 @@ const login = () => {
   };
 
   const handleLogin = async () => {
-    // Basic validation
     if (!email || !password) {
       Alert.alert('Error', 'Please fill in all fields.');
       return;
@@ -50,7 +48,6 @@ const login = () => {
       const responseData = await response.json();
 
       if (response.status === 200) {
-        // Extract tokens from response
         const { accessToken, refreshToken } = responseData;
         
         if (!accessToken || !refreshToken) {
@@ -58,24 +55,21 @@ const login = () => {
           return;
         }
 
-        // Validate token format
+        // validate token format
         if (!isValidJWT(accessToken) || !isValidJWT(refreshToken)) {
           Alert.alert('Error', 'Invalid token format received.');
           return;
         }
 
-        // Use auth context to handle login i.e. store access & refresh tokens
+        // use auth context to store access & refresh tokens
         await authLogin(accessToken, refreshToken);
         
         Alert.alert('Success', 'Logged in successfully!');
         
-        // Navigation will be handled automatically by the auth context
-        // The app will re-render and show the authenticated screens
-        // Navigate to main app
+        // navigate to main app
         router.replace('../(tabs)');
         
       } else if (response.status === 403) {
-        // User exists but is not verified
         Alert.alert('Account Not Verified', 'Please check your email for the verification code.');
         
         try {
@@ -122,7 +116,7 @@ const login = () => {
       Alert.alert('Reset Password', 'Please enter your email address first');
       return;
     }
-    // TODO: Implement password reset functionality
+    // TODO: implement password reset functionality
     Alert.alert('Password Reset', 'Password reset link sent to your email');
   };
 
@@ -132,7 +126,7 @@ const login = () => {
         <Text style={styles.title}>Welcome Back</Text>
         <Text style={styles.subtitle}>Sign in to your account</Text>
         
-        {/* Email */}
+        {/* email */}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>School Email</Text>
           <TextInput
@@ -147,7 +141,7 @@ const login = () => {
           />
         </View>
 
-        {/* Password */}
+        {/* password */}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Password</Text>
           <TextInput
@@ -162,7 +156,7 @@ const login = () => {
           />
         </View>
 
-        {/* Forgot Password Link */}
+        {/* forgot password link */}
         <TouchableOpacity 
           style={styles.forgotPasswordLink} 
           onPress={handleForgotPassword}
@@ -171,7 +165,7 @@ const login = () => {
           <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
         </TouchableOpacity>
 
-        {/* Login Button */}
+        {/* login button */}
         <TouchableOpacity 
           style={[styles.loginButton, isLoading && styles.loginButtonDisabled]} 
           onPress={handleLogin}
@@ -182,7 +176,7 @@ const login = () => {
           </Text>
         </TouchableOpacity>
 
-        {/* Register Link */}
+        {/* register link */}
         <TouchableOpacity 
           style={styles.registerLink} 
           onPress={() => router.push("/register")}
@@ -198,7 +192,7 @@ const login = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f5f9f1',
   },
   content: {
     padding: 20,
@@ -209,13 +203,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 8,
-    color: '#333',
+    color: '#1b0c0cff',
   },
   subtitle: {
     fontSize: 16,
     textAlign: 'center',
     marginBottom: 40,
-    color: '#666',
+    color: '#353a22ff',
   },
   inputGroup: {
     marginBottom: 20,
@@ -239,15 +233,25 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   forgotPasswordText: {
-    color: '#007AFF',
+    color: '#494e32ff',
     fontSize: 14,
   },
   loginButton: {
-    backgroundColor: '#007AFF',
-    borderRadius: 8,
-    padding: 15,
+    backgroundColor: '#9daa72ff',
+    width: '100%',
+    height: 55,
+    borderRadius: 27.5,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   loginButtonDisabled: {
     backgroundColor: '#cccccc',
@@ -262,7 +266,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   registerLinkText: {
-    color: '#007AFF',
+    color: '#494e32ff',
     fontSize: 16,
   },
 });
