@@ -2,12 +2,8 @@
 /backend/.gradle
 /backend/bin
 /backend/build
-/backend/gradle
-/backend/build.gradle
-/backend/gradlew
-/backend/gradlew.bat
-/backend/settings.gradle
 /backend/HELP.md
+/backend/.env
 
 # frontend
 /apps/.expo
@@ -27,5 +23,4 @@
 desktop_icon
 Icon
 unicycle_db.session.sql
-.env
 .vscode
