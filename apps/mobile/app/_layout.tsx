@@ -6,7 +6,7 @@ import React from 'react';
 import { useEffect } from 'react';
 import { ActivityIndicator, View, Text, StyleSheet } from 'react-native';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { useColorScheme } from './hooks/useColorScheme';
 import { AuthProvider, useAuth } from './contexts/auth-context';
 
 // TODO: loading screen placeholder component

@@ -7,8 +7,6 @@ import { router } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
 
-const { height } = Dimensions.get('window');
-
 export default function LandingPage() {
   const [fontsLoaded] = useFonts({
     'Sunday-Morning': require('../assets/fonts/Sunday-Morning.otf'),
@@ -31,7 +29,7 @@ export default function LandingPage() {
   };
 
   const handleLogIn = () => {
-    console.log('log In pressed');
+    console.log('log in pressed');
     router.navigate('/(auth)/login')
   };
 
@@ -61,6 +59,7 @@ export default function LandingPage() {
           style={[styles.button, styles.signUpButton]} 
           onPress={handleSignUp}
           activeOpacity={0.8}
+          testID="signUpButton"
         >
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
@@ -69,6 +68,7 @@ export default function LandingPage() {
           style={[styles.button, styles.logInButton]} 
           onPress={handleLogIn}
           activeOpacity={0.8}
+          testID="loginButton"
         >
           <Text style={[styles.buttonText, styles.logInText]}>Log In</Text>
         </TouchableOpacity>

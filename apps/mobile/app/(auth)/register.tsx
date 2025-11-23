@@ -15,7 +15,7 @@ import { router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 
 import { DORMS } from "../constants/Dorms";
-import { Dropdown } from '@/components/ui/Dropdown';
+import { Dropdown } from '../components/ui/Dropdown';
 
 // TODO: registration -> login pipeline DOES NOT work
 
