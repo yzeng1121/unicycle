@@ -22,4 +22,5 @@ module.exports = {
 
     __mockNavigate: mockNavigate,
     __mockPush: mockPush,
+    __mockReplace: mockReplace,
 };
