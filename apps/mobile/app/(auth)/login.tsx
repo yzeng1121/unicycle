@@ -138,6 +138,7 @@ const login = () => {
             autoCapitalize="none"
             autoCorrect={false}
             editable={!isLoading}
+            testID="emailInput"
           />
         </View>
 
@@ -153,6 +154,7 @@ const login = () => {
             autoCapitalize="none"
             autoCorrect={false}
             editable={!isLoading}
+            testID="passwordInput"
           />
         </View>
 
@@ -161,6 +163,7 @@ const login = () => {
           style={styles.forgotPasswordLink} 
           onPress={handleForgotPassword}
           disabled={isLoading}
+          testID="forgotPasswordButton"
         >
           <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
         </TouchableOpacity>
@@ -170,6 +173,7 @@ const login = () => {
           style={[styles.loginButton, isLoading && styles.loginButtonDisabled]} 
           onPress={handleLogin}
           disabled={isLoading}
+          testID="loginButton"
         >
           <Text style={styles.loginButtonText}>
             {isLoading ? 'Signing In...' : 'Sign In'}
@@ -181,6 +185,7 @@ const login = () => {
           style={styles.registerLink} 
           onPress={() => router.push("/register")}
           disabled={isLoading}
+          testID="registerLink"
         >
           <Text style={styles.registerLinkText}>Don't have an account? Create one</Text>
         </TouchableOpacity>

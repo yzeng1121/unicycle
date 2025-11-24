@@ -21,13 +21,13 @@ const LoadingScreen: React.FC = () => (
 const AppNavigation: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
 
-  useEffect(() => {
-    if (!isLoading) {
-      if (isAuthenticated) {
-        router.replace('/(tabs)');
-      }
-    }
-  }, [isAuthenticated, isLoading]);
+  // useEffect(() => {
+  //   if (!isLoading) {
+  //     if (isAuthenticated) {
+  //       router.replace('/(tabs)');
+  //     }
+  //   }
+  // }, [isAuthenticated, isLoading]);
   
   if (isLoading) {
     return <LoadingScreen />;
@@ -45,8 +45,6 @@ const AppNavigation: React.FC = () => {
       <Stack.Screen name="product" options={{ headerShown: false }} />
       <Stack.Screen name="user/[userId]" options={{ headerShown: false }} />
       <Stack.Screen name="asks" options={{ headerShown: false }} />
-      
-      <Stack.Screen name="+not-found" />
     </Stack>
   );
 };

@@ -2,7 +2,7 @@ import { render, fireEvent } from '@testing-library/react-native';
 import LandingPage from '../app/index';
 
 jest.mock('expo-router');
-const expoRouter = require('expo-router');
+const { __mockNavigate, __mockPush, __mockReplace } = require('expo-router');
 
 describe('landing page navigation buttons', () => {
     beforeEach(() => {
@@ -16,7 +16,7 @@ describe('landing page navigation buttons', () => {
         fireEvent.press(getByTestId('signUpButton'));
 
         expect(consoleOutput).toHaveBeenCalledWith("sign up pressed");
-        expect(expoRouter.__mockNavigate).toHaveBeenCalledWith('/(auth)/register')
+        expect(__mockNavigate).toHaveBeenCalledWith('/(auth)/register')
     });
 
     it('navigates to register pagewhen pressed', () => {
@@ -26,6 +26,6 @@ describe('landing page navigation buttons', () => {
         fireEvent.press(getByTestId('loginButton'));
 
         expect(consoleOutput).toHaveBeenCalledWith("log in pressed");
-        expect(expoRouter.__mockNavigate).toHaveBeenCalledWith('/(auth)/login')
+        expect(__mockNavigate).toHaveBeenCalledWith('/(auth)/login')
     })
 });

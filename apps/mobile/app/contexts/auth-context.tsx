@@ -337,13 +337,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Check auth status on app load
   useEffect(() => {
     checkAuthStatus();
-
-    console.log('🔄 AUTH STATE CHANGED:', {
-      isAuthenticated,
-      isLoading,
-      hasToken: !!accessToken
-    });
-  }, [isAuthenticated, isLoading, accessToken]);
+  }, []);
 
   const value: AuthContextType = {
     isAuthenticated,

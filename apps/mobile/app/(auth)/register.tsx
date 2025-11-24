@@ -6,7 +6,6 @@ import {
   StyleSheet, 
   ScrollView, 
   Alert, 
-  Modal, 
   KeyboardAvoidingView,
   Platform
 } from 'react-native';
@@ -17,9 +16,7 @@ import * as SecureStore from 'expo-secure-store';
 import { DORMS } from "../constants/Dorms";
 import { Dropdown } from '../components/ui/Dropdown';
 
-// TODO: registration -> login pipeline DOES NOT work
-
-const register = () => {
+const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [selectedDorm, setSelectedDorm] = useState('');
@@ -49,12 +46,13 @@ const register = () => {
   // validate username
   const isValidUsername = (username: string) => {
     const usernameRegex = /^[a-zA-Z0-9_.]+$/;
-    return usernameRegex.test(username) && username.length >= 3;
+    return usernameRegex.test(username) && username.length >= 5;
   };
 
   // password strength validation
   const isValidPassword = (password: string) => {
-    return password.length >= 8;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+    return passwordRegex.test(password) && password.length >= 8;
   };
 
   const handleRegister = async () => {
@@ -82,12 +80,12 @@ const register = () => {
     }
 
     if (!isValidPassword(password)) {
-      Alert.alert('Error', 'Password must be at least 8 characters long.');
+      Alert.alert('Error', 'Password must be at least 8 characters long, include uppercase, lowercase, numbers, and at least one special character.');
       return;
     }
 
     if (!isValidUsername(username)) {
-      Alert.alert('Error', 'Username must be at least 3 characters and contain only letters, numbers, and underscores.');
+      Alert.alert('Error', 'Username must be at least 5 characters and contain only letters, numbers, periods, and underscores.');
       return;
     }
 
@@ -176,6 +174,7 @@ const register = () => {
               onChangeText={setFirstName}
               autoCapitalize="words"
               editable={!isLoading}
+              testID="firstNameInput"
             />
           </View>
 
@@ -189,6 +188,7 @@ const register = () => {
               onChangeText={setLastName}
               autoCapitalize="words"
               editable={!isLoading}
+              testID="lastNameInput"
             />
           </View>
 
@@ -201,6 +201,7 @@ const register = () => {
             options={DORMS}
             required={true}
             maxHeight={250}
+            testID="dropdownInput"
           />
 
           {/* school email */}
@@ -215,6 +216,7 @@ const register = () => {
               autoCapitalize="none"
               autoCorrect={false}
               editable={!isLoading}
+              testID="emailInput"
             />
           </View>
 
@@ -223,18 +225,22 @@ const register = () => {
             <Text style={styles.label}>Username *</Text>
             <TextInput
               style={styles.input}
-              placeholder="Choose a username (3+ characters, letters, numbers, _)"
+              placeholder="Choose a username (5+ characters, letters, numbers, _)"
               value={username}
               onChangeText={setUsername}
               autoCapitalize="none"
               autoCorrect={false}
               editable={!isLoading}
+              testID="usernameInput"
             />
           </View>
 
           {/* password */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Password *</Text>
+            <Text>
+              Password must be 8+ characters, include uppercase letters, lowercase letters, numbers, and at least one special character.
+            </Text>
             <TextInput
               style={styles.input}
               placeholder="Create a password (8+ characters)"
@@ -244,6 +250,7 @@ const register = () => {
               autoCapitalize="none"
               autoCorrect={false}
               editable={!isLoading}
+              testID="passwordInput"
             />
           </View>
 
@@ -259,6 +266,7 @@ const register = () => {
               autoCapitalize="none"
               autoCorrect={false}
               editable={!isLoading}
+              testID="confirmPasswordInput"
             />
           </View>
 
@@ -269,6 +277,7 @@ const register = () => {
             onPress={handleRegister}
             disabled={isLoading}
             activeOpacity={0.7}
+            testID="registerButton"
           >
             <Text style={styles.registerButtonText}>
               {isLoading ? 'Creating Account...' : 'Create Account'}
@@ -285,6 +294,7 @@ const register = () => {
             }}
             disabled={isLoading}
             activeOpacity={0.7}
+            testID="loginLink"
           >
             <Text style={styles.loginLinkText}>Already have an account? Sign in</Text>
           </TouchableOpacity>
@@ -424,5 +434,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default register;
+export default RegisterPage;
 

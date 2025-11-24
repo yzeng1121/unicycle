@@ -9,6 +9,7 @@ interface DropdownProps {
   options: string[];
   required?: boolean;
   maxHeight?: number;
+  testID?: string;
 }
 
 export const Dropdown: React.FC<DropdownProps> = ({
