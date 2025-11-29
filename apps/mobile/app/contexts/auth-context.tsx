@@ -123,7 +123,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // verifies whether access token is valid, allowing user to access the home page
   const verifyTokenWithBackend = async (token: string): Promise<boolean> => {
     try {
-      const response = await fetch('http://10.243.122.160:8080/users/me', {
+      const response = await fetch('http://Yuxins-Mac.local:8080/users/me', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -163,7 +163,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         throw new Error('No refresh token available');
       }
 
-      const response = await fetch('http://10.243.122.160:8080/auth/refresh', {
+      const response = await fetch('http://Yuxins-Mac.local:8080/auth/refresh', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -318,7 +318,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       
       if (refreshToken) {
         // Call backend to invalidate refresh token
-        await fetch('http://10.243.122.160:8080/auth/logout', {
+        await fetch('http://Yuxins-Mac.local:8080/auth/logout', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

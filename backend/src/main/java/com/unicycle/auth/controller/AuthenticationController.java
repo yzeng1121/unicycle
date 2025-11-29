@@ -17,10 +17,13 @@ import com.unicycle.auth.service.AuthenticationService;
 import com.unicycle.auth.service.JwtService;
 import com.unicycle.auth.service.RefreshTokenService;
 import com.unicycle.auth.service.UserService;
+import com.unicycle.profile.service.ProfileService;
+import com.unicycle.profile.entity.Profile;
 
 import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -32,6 +35,7 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final RefreshTokenService refreshTokenService;
     private final UserService userService;
+    private final ProfileService profileService;
 
     // TODO: after a user successfully signs up, they should have an associated default
     // user profile on the database
@@ -39,11 +43,13 @@ public class AuthenticationController {
     public ResponseEntity<?> register(@RequestBody RegisterUserDto registerUserDto) {
         try {
             User registeredUser = authenticationService.signup(registerUserDto);
-
-            System.out.println("registeredUser.getEmail: " + registeredUser.getEmail());
-            System.out.println("registeredUser.getUsername: " + registeredUser.getUsername());
-
-            return ResponseEntity.ok(registeredUser);
+            Profile initializedProfile = profileService.initializeProfile(registeredUser.getUserId());
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("user", registeredUser);
+            response.put("profile", initializedProfile);
+            
+            return ResponseEntity.ok(response);
         } catch (DataIntegrityViolationException e) {
             if (e.getMessage().contains("unique_username")) {
                 return ResponseEntity.status(403).body(
@@ -53,7 +59,6 @@ public class AuthenticationController {
             return ResponseEntity.status(401).body(
                 Map.of("message", e.getMessage())
             );
-
         }
     }
 
@@ -153,9 +158,9 @@ public class AuthenticationController {
     // }
 
     @PostMapping("/resend")
-    public ResponseEntity<?> resendVerificationCode(@RequestParam String email) {
+    public ResponseEntity<?> resendVerificationCode(@RequestBody Map<String, String> body) {
         try {
-            authenticationService.resendVerificationCode(email);
+            authenticationService.resendVerificationCode(body.get("email"));
             return ResponseEntity.ok("Verification code sent.");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

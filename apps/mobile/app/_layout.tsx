@@ -21,14 +21,14 @@ const LoadingScreen: React.FC = () => (
 const AppNavigation: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
 
-  // useEffect(() => {
-  //   if (!isLoading) {
-  //     if (isAuthenticated) {
-  //       router.replace('/(tabs)');
-  //     }
-  //   }
-  // }, [isAuthenticated, isLoading]);
-  
+  useEffect(() => {
+    if (!isLoading) {
+      if (isAuthenticated) {
+        router.replace('/(tabs)');
+      }
+    }
+  }, [isAuthenticated, isLoading]);
+
   if (isLoading) {
     return <LoadingScreen />;
   }
@@ -36,11 +36,9 @@ const AppNavigation: React.FC = () => {
   return (
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
-
       <Stack.Screen name="(auth)/register" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)/verification" options={{ headerShown: false }} />
-      
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="product" options={{ headerShown: false }} />
       <Stack.Screen name="user/[userId]" options={{ headerShown: false }} />
@@ -48,6 +46,29 @@ const AppNavigation: React.FC = () => {
     </Stack>
   );
 };
+
+// TODO: remove later... used for TESTING
+const RedirectApp: React.FC = () => {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (isAuthenticated) {
+        router.replace('/(tabs)');
+      }
+    }
+  }, [isAuthenticated, isLoading]);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  return (
+    <Stack>
+      <Stack.Screen name="(auth)/verification" options={{ headerShown: false }} />
+    </Stack>
+  );
+}
 
 const RootLayout: React.FC = () => {
   const colorScheme = useColorScheme();
@@ -61,6 +82,8 @@ const RootLayout: React.FC = () => {
     <AuthProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <AppNavigation />
+        {/* TODO: this is for testing */}
+        {/* <RedirectApp />  */}
         <StatusBar style="auto" />
       </ThemeProvider>
     </AuthProvider>

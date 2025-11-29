@@ -33,7 +33,7 @@ const login = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://10.243.122.160:8080/auth/login', {
+      const response = await fetch('http://Yuxins-Mac.local:8080/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ const login = () => {
         Alert.alert('Account Not Verified', 'Please check your email for the verification code.');
         
         try {
-          const resendResponse = await fetch(`http://10.243.122.160:8080/auth/resend?email=${encodeURIComponent(email)}`, {
+          const resendResponse = await fetch(`http://Yuxins-Mac.local:8080/auth/resend?email=${encodeURIComponent(email)}`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

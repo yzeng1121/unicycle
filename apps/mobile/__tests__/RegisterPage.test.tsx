@@ -21,6 +21,9 @@ jest.mock('../app/components/ui/Dropdown', () => ({
     }
 }));
 
+// TODO: registering after you've already made an account
+// TODO: check whether a defauly profile is made...
+
 let alertSpy: jest.SpyInstance;
 
 describe('input validation', () => {
@@ -360,7 +363,7 @@ describe('successful registration', () => {
         
         await waitFor(() => {
             expect(fetch).toHaveBeenCalledWith(
-                'http://10.243.122.160:8080/auth/signup',
+                'http://Yuxins-Mac.local:8080/auth/signup',
                 expect.objectContaining({
                     method: 'POST',
                     headers: {

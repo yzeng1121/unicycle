@@ -52,7 +52,7 @@ const ProductGrid = () => {
       console.log("The id of the user who's prompting a search is..." + user.userId);
       try {
         const response = await makeAuthenticatedRequest(
-          `http://10.243.122.160:8080/api/listings/search?userId=${user.userId}&query=${encodeURIComponent(newQuery)}`
+          `http://Yuxins-Mac.local:8080/api/listings/search?userId=${user.userId}&query=${encodeURIComponent(newQuery)}`
         );
 
         if (response.ok) {
@@ -74,7 +74,7 @@ const ProductGrid = () => {
       // const response = await makeAuthenticatedRequest('http://192.168.86.46:8080/api/listings/create', {
       console.log("UserId is " + user.userId);
       const response = await makeAuthenticatedRequest(
-        `http://10.243.122.160:8080/api/listings/search?userId=${user.userId}&query=${encodeURIComponent(query)}`, {
+        `http://Yuxins-Mac.local:8080/api/listings/search?userId=${user.userId}&query=${encodeURIComponent(query)}`, {
 
       });
 

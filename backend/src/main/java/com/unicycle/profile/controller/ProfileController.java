@@ -41,40 +41,31 @@ public class ProfileController {
     private final UserProfilesRepository userProfilesRepository;
     private final ImageUploadService imageUploadService;
 
+
+    @PostMapping("/initialize")
+    public ResponseEntity<?> initializeProfile(UUID userId) {
+        try {
+            Profile initializedProfile = profileService.initializeProfile(userId);
+            
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "profile", initializedProfile,
+                "message", "Default profile initialized."
+            ));
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                "success", false,
+                "message", "Failed to initialize profile: " + e.getMessage()
+            ));
+        }
+    }
+
     // CREATE method
     @PostMapping("/create")
     public ResponseEntity<?> createProfile(ProfileDto input) {
         try {
-            // 1. Upload images first
-            String imageUrl = null;
-            if (input.getProfileImage() != null && !input.getProfileImage().isEmpty()) {
-                imageUrl = imageUploadService.uploadSingleImage(input.getProfileImage(), "profile-images");
-            }
-
-            // Set default values for empty lists
-            List<UUID> listings = isNotEmpty(input.getListings()) ? input.getListings() : new ArrayList<>();
-            List<UUID> savedListings = isNotEmpty(input.getSavedListings()) ? input.getSavedListings() : new ArrayList<>();
-            List<UUID> purchased = isNotEmpty(input.getPurchased()) ? input.getPurchased() : new ArrayList<>();
-            List<UUID> followers = isNotEmpty(input.getFollowers()) ? input.getFollowers() : new ArrayList<>();
-            List<UUID> following = isNotEmpty(input.getFollowing()) ? input.getFollowing() : new ArrayList<>();
-            
-            // 2. Create user profile
-            Profile profile = Profile.builder()
-                .userId(input.getUserId())
-                .profileImage(imageUrl)
-                .listings(listings)
-                .savedListings(savedListings)
-                .purchased(purchased)
-                .followers(followers)
-                .followerCount(input.getFollowerCount())
-                .following(following)
-                .followingCount(input.getFollowingCount())
-                .rating(input.getRating())
-                .createdAt(LocalDateTime.now())
-                .build();
-            
-            // 3. Save user profile to database
-            Profile savedProfile = userProfilesRepository.save(profile);
+            Profile savedProfile = profileService.createProfile(input);
             
             return ResponseEntity.ok(Map.of(
                 "success", true,
@@ -85,7 +76,7 @@ public class ProfileController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of(
                 "success", false,
-                "message", "Failed to create listing: " + e.getMessage()
+                "message", "Failed to create profile: " + e.getMessage()
             ));
         }
     }

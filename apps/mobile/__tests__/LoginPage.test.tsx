@@ -120,7 +120,7 @@ describe('login validation', () => {
             
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledWith(
-                    'http://10.243.122.160:8080/auth/login',
+                    'http://Yuxins-Mac.local:8080/auth/login',
                     expect.objectContaining({
                         method: 'POST',
                         headers: {

@@ -64,7 +64,7 @@ export default function ProductScreen() {
     const fetchProduct = async () => {
       try {
         const response = await makeAuthenticatedRequest(
-          `http://10.243.122.160:8080/api/listings/${itemId}`
+          `http://Yuxins-Mac.local:8080/api/listings/${itemId}`
         );
         
         if (response.ok) {
@@ -83,7 +83,7 @@ export default function ProductScreen() {
           // TODO: fetch basic user info
           try {
             const response = await makeAuthenticatedRequest(
-              `http://10.243.122.160:8080/users/${userId}/get-header`
+              `http://Yuxins-Mac.local:8080/users/${userId}/get-header`
             );
             
             if (response.ok) {
@@ -174,7 +174,7 @@ export default function ProductScreen() {
 
     try {
       const result = await makeAuthenticatedRequest(
-        `http://10.243.122.160:8080/api/listings/${item.itemId}?userId=${userId}`,
+        `http://Yuxins-Mac.local:8080/api/listings/${item.itemId}?userId=${userId}`,
         {
           method: 'DELETE'
         }

@@ -28,8 +28,7 @@ const verification = () => {
     }
 
     try {
-      // Here you would typically make an API call to verify the code
-      const response = await fetch('http://10.243.122.160:8080/auth/verify', {
+      const response = await fetch('http://Yuxins-Mac.local:8080/auth/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,13 +62,12 @@ const verification = () => {
     setIsResending(true);
     
     try {
-      // Here you would typically make an API call to resend the verification code
-      const response = await fetch('/api/resend-verification', {
+      const response = await fetch('http://Yuxins-Mac.local:8080/auth/resend', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: email })
+        body: JSON.stringify({ email })
       });
 
       if (response.ok) {
@@ -112,12 +110,12 @@ const verification = () => {
           />
         </View>
 
-        {/* Submit Button */}
+        {/* submit */}
         <TouchableOpacity style={styles.verifyButton} onPress={handleVerifyCode}>
           <Text style={styles.verifyButtonText}>Verify Email</Text>
         </TouchableOpacity>
 
-        {/* Resend Code */}
+        {/* resend */}
         <TouchableOpacity 
           style={styles.resendLink} 
           onPress={handleResendCode}
@@ -128,7 +126,7 @@ const verification = () => {
           </Text>
         </TouchableOpacity>
 
-        {/* Back to Login */}
+        {/* back to login */}
         <TouchableOpacity style={styles.backLink} onPress={handleBackToLogin}>
           <Text style={styles.backLinkText}>Back to Sign In</Text>
         </TouchableOpacity>
@@ -140,7 +138,7 @@ const verification = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f5f9f1',
   },
   content: {
     padding: 20,
@@ -150,8 +148,8 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 8,
-    color: '#333',
+    marginBottom: 30,
+    color: '#1b0c0cff',
   },
   subtitle: {
     fontSize: 16,
@@ -174,19 +172,26 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 8,
     padding: 15,
-    fontSize: 20,
+    fontSize: 16,
     borderWidth: 1,
     borderColor: '#ddd',
-    textAlign: 'center',
-    letterSpacing: 2,
-    fontWeight: '600',
   },
   verifyButton: {
-    backgroundColor: '#007AFF',
-    borderRadius: 8,
-    padding: 15,
+    backgroundColor: '#9daa72ff',
+    width: '100%',
+    height: 55,
+    borderRadius: 27.5,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   verifyButtonText: {
     color: 'white',
@@ -199,7 +204,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   resendText: {
-    color: '#007AFF',
+    color: '#383d24ff',
     fontSize: 14,
     textAlign: 'center',
     lineHeight: 20,
@@ -212,7 +217,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   backLinkText: {
-    color: '#007AFF',
+    color: '#383d24ff',
     fontSize: 16,
   },
 });

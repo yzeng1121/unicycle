@@ -56,10 +56,6 @@ const RegisterPage = () => {
   };
 
   const handleRegister = async () => {
-    console.log("State:", {
-      firstName, lastName, selectedDorm, email, username, password, confirmPassword
-    });
-
     if (
       !firstName || 
       !lastName || 
@@ -97,7 +93,7 @@ const RegisterPage = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://10.243.122.160:8080/auth/signup', {
+      const response = await fetch('http://Yuxins-Mac.local:8080/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

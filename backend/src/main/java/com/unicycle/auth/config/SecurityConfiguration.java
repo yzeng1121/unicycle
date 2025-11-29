@@ -57,7 +57,7 @@ public class SecurityConfiguration {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // WHO can access the API
-        configuration.setAllowedOrigins(List.of("exp://10.243.122.160:8081", "http://localhost:8080"));
+        configuration.setAllowedOrigins(List.of("exp://10.243.122.160:8081", "exp://Yuxins-Mac.local:8081", "http://localhost:8080"));
 
         // WHAT actions they can do
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));

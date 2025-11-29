@@ -109,7 +109,7 @@ const profile = () => {
       let user: User = {
         id: userId,
         username: name,
-        profilePhoto: imageUrl
+        profilePhoto: (imageUrl == null || imageUrl.trim().length === 0) ? '/Users/yuxin/Desktop/unicycle_v2/apps/assets/images/placeholder-pfp.jpg' : imageUrl
       };
       users.push(user);
     }
@@ -118,12 +118,11 @@ const profile = () => {
   const fetchUserProfilePicture = async (userId: string) => {
     try {
       const response = await makeAuthenticatedRequest(
-        `http://10.243.122.160:8080/users/${userId}/get-profile-image`
+        `http://Yuxins-Mac.local:8080/users/${userId}/get-profile-image`
       );
 
       if (response.ok) {
         const data = await response.json();
-        console.log(`Response data for ${userId}:`, data);
         return data.imageUrl;
       }
     } catch (error) {
@@ -135,7 +134,7 @@ const profile = () => {
   const fetchUsername = async (userId: string) => {
     try {
       const response = await makeAuthenticatedRequest(
-        `http://10.243.122.160:8080/users/${userId}/get-username`
+        `http://Yuxins-Mac.local:8080/users/${userId}/get-username`
       );
 
       if (response.ok) {
@@ -164,7 +163,7 @@ const profile = () => {
   const fetchListingCover = async (listingId: string) => {
     try {
       const response = await makeAuthenticatedRequest(
-          `http://10.243.122.160:8080/api/listings/${listingId}/get-cover-photo`
+          `http://Yuxins-Mac.local:8080/api/listings/${listingId}/get-cover-photo`
       );
       console.log(`Listing ${listingId} response status:`, response.status);
 
@@ -188,28 +187,16 @@ const profile = () => {
         setLoading(true);
 
         const response = await makeAuthenticatedRequest(
-          'http://10.243.122.160:8080/profiles/me'
+          'http://Yuxins-Mac.local:8080/profiles/me'
         );
-
-        console.log("Response status:", response.status);
-        console.log("Response status text:", response.statusText);
-        console.log("Response headers:", response.headers);
 
         if (response.ok) {
           const profileData: ProfileResponse = await response.json();
-          console.log("=== FULL PROFILE DATA ===");
-          console.log(JSON.stringify(profileData, null, 2));
-          console.log("Profile keys:", Object.keys(profileData));
-          console.log("=========================");
-
+        
           await fillMyProfile(profileData);
-          // setMyProfile(profileData); // TODO: remove and instead move to fillProfile
 
-          console.log("Profile Username: " + profileData?.username);
-          console.log("Profile ID: " + profileData?.userId);
           setLoading(false);
         } else {
-          console.log("Response is NOT OK")
           setLoading(false);
         }
       } catch (error) {
@@ -399,7 +386,7 @@ const profile = () => {
       console.log("Sending image to backend...")
       console.log("profileId = " + myProfile?.profileId)
       console.log("accessToken = " + accessToken)
-      const response = await fetch(`http://10.243.122.160:8080/profiles/${myProfile?.profileId}/update/profile-image`, {
+      const response = await fetch(`http://Yuxins-Mac.local:8080/profiles/${myProfile?.profileId}/update/profile-image`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${accessToken}`
@@ -422,7 +409,7 @@ const profile = () => {
   const removeExistingImage = async () => {
     try {
       console.log("Attempting to delete the existing profile image...")
-      const response = await fetch(`http://10.243.122.160:8080/profiles/${myProfile?.profileId}/delete/profile-image`, { // tufts
+      const response = await fetch(`http://Yuxins-Mac.local:8080/profiles/${myProfile?.profileId}/delete/profile-image`, { // tufts
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`
