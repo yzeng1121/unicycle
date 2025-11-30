@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import React, { useState } from 'react'
 import * as ImagePicker from 'expo-image-picker';
-import { useAuth } from '../contexts/auth-context';
+import { useAuth } from '../../contexts/AuthContext';
 
 // TODO: i kinda dont want the nav bar here
 // TODO: what to dispaly when image uploads to S3 but for whatever reason doesnt display

@@ -9,7 +9,7 @@ import {
   Alert
 } from 'react-native';
 import { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/auth-context';
+import { useAuth } from '../../contexts/AuthContext';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 
@@ -109,7 +109,7 @@ const profile = () => {
       let user: User = {
         id: userId,
         username: name,
-        profilePhoto: (imageUrl == null || imageUrl.trim().length === 0) ? '/Users/yuxin/Desktop/unicycle_v2/apps/assets/images/placeholder-pfp.jpg' : imageUrl
+        profilePhoto: imageUrl
       };
       users.push(user);
     }
@@ -206,6 +206,7 @@ const profile = () => {
     }
     fetchMyProfile();
   }, []);
+  
 
   // TODO: loading screen 
   if (loading) {

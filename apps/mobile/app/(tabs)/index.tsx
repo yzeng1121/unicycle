@@ -1,10 +1,9 @@
 import { View, Text, Image, TextInput, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from "expo-router";
 
-import { data, getItemImage } from "../sample_data/listings";
-import { requests } from "../sample_data/asks";
-import { searchForItem } from "./search";
+import { data, getItemImage } from "../../sample_data/listings";
+import { requests } from "../../sample_data/asks";
 
 // TODO: create more centralized Item & QuickAsk type to avoid errors
 type Item = {

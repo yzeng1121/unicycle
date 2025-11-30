@@ -1,4 +1,4 @@
-import { imageMap } from '../../assets/images/ImageMapper'; // Import the imageMap
+import { imageMap } from '../assets/images/ImageMapper'; // Import the imageMap
 
 export const data = [
   {
@@ -178,7 +178,7 @@ export const searchProducts = (query) => {
 // Gets the first image of an item
 export const getItemImage = (item, imageIndex) => {
   const imagePath = item.images[imageIndex];
-  return imageMap[imagePath] || require('../../assets/images/placeholder.jpg');
+  return imageMap[imagePath] || require('../assets/images/placeholder.jpg');
 };
 
 // Sample usage examples:

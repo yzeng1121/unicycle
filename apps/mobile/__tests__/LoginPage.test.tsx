@@ -1,12 +1,12 @@
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import LoginPage from '../app/(auth)/login';
 import { Alert } from 'react-native';
-import { useAuth } from '../app/contexts/auth-context';
+import { useAuth } from '../contexts/AuthContext';
 
 const { __mockPush, __mockReplace } = require('expo-router');
 const mockAuthLogin = jest.fn();
 
-jest.mock('../app/contexts/auth-context', () => ({
+jest.mock('../app/contexts/AuthContext', () => ({
     useAuth: jest.fn(() => ({
         login: mockAuthLogin,
         logout: jest.fn(),

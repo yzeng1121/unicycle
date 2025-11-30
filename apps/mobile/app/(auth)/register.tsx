@@ -13,8 +13,8 @@ import { useState } from 'react';
 import { router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 
-import { DORMS } from "../constants/Dorms";
-import { Dropdown } from '../components/ui/Dropdown';
+import { DORMS } from "../../constants/Dorms";
+import { Dropdown } from '../../components/ui/Dropdown';
 
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');

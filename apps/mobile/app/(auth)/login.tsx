@@ -1,7 +1,7 @@
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import { useState, useEffect } from 'react';
 import { router } from 'expo-router';
-import { useAuth } from '../contexts/auth-context';
+import { useAuth } from '../../contexts/AuthContext';
 
 const login = () => {
   const [email, setEmail] = useState('');

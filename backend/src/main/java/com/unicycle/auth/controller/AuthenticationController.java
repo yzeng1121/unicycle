@@ -97,7 +97,6 @@ public class AuthenticationController {
     // generates new access token
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
-        System.out.println("Refreshing token right now: " + System.currentTimeMillis());
         String refreshTokenValue = request.getRefreshToken();
         
         // checks if token is valid
@@ -108,12 +107,10 @@ public class AuthenticationController {
         }
         
         try {
-            // Extract user from refresh token
             UUID userId = jwtService.extractUserId(refreshTokenValue);
             // TODO: error here because tries to find user by email but actually gives username
             User user = userService.findByUserId(userId);
             
-            // Generate new access token
             String newAccessToken = jwtService.generateAccessToken(user);
             
             AccessTokenResponse response = new AccessTokenResponse(

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import { useLocalSearchParams } from 'expo-router';
-import { useAuth } from '../contexts/auth-context';
+import { useAuth } from '../../contexts/AuthContext';
 
 type Item = {
   id: string;     

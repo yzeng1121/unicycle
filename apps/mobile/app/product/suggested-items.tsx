@@ -2,7 +2,7 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image } from 'rea
 import React from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
-import { data, getItemImage } from "../sample_data/listings" // Adjust path as needed
+import { data, getItemImage } from "../../sample_data/listings" // Adjust path as needed
 
 type Item = {
   id: string;        

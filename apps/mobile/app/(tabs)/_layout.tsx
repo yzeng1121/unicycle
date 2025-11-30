@@ -1,10 +1,10 @@
 import { Tabs } from 'expo-router';
 import { Platform } from 'react-native';
 
-import { HapticTab } from '../components/HapticTab';
-import TabBarBackground from '../components/TabbarBackground';
-import { Colors } from '../constants/Colors';
-import { useColorScheme } from '../hooks/useColorScheme';
+import { HapticTab } from '../../components/HapticTab';
+import TabBarBackground from '../../components/TabbarBackground';
+import { Colors } from '../../constants/Colors';
+import { useColorScheme } from '../../hooks/useColorScheme';
 
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';

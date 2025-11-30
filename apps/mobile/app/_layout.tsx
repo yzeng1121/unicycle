@@ -2,12 +2,13 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import * as SplashScreen from 'expo-splash-screen';
 import React from 'react';
 import { useEffect } from 'react';
 import { ActivityIndicator, View, Text, StyleSheet } from 'react-native';
 
-import { useColorScheme } from './hooks/useColorScheme';
-import { AuthProvider, useAuth } from './contexts/auth-context';
+import { useColorScheme } from '../hooks/useColorScheme';
+import { AuthProvider, useAuth } from '../contexts/AuthContext';
 
 // TODO: loading screen placeholder component
 const LoadingScreen: React.FC = () => (
@@ -25,6 +26,8 @@ const AppNavigation: React.FC = () => {
     if (!isLoading) {
       if (isAuthenticated) {
         router.replace('/(tabs)');
+      } else {
+        router.replace('/(auth)/login');
       }
     }
   }, [isAuthenticated, isLoading]);
@@ -75,6 +78,12 @@ const RootLayout: React.FC = () => {
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+
+  useEffect(() => {
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
 
   if (!loaded) return null;
 

@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { requests } from '../sample_data/asks';
+import { requests } from '../../sample_data/asks';
 
 interface Message {
   id: string;
