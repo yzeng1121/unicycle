@@ -9,11 +9,6 @@
 /apps/.expo
 /apps/mobile/node_modules
 /apps/expo-env.d.ts
-/apps/mobile/app.json
-/apps/mobile/package-lock.json
-/apps/mobile/package.json
-/apps/mobile/tsconfig.json
-/apps/eslint.config.js
 /apps/mobile/ios
 /apps/mobile/android
 
