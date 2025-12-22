@@ -57,7 +57,7 @@ const RedirectApp: React.FC = () => {
   useEffect(() => {
     if (!isLoading) {
       if (isAuthenticated) {
-        router.replace('/(tabs)');
+        router.replace('index');
       }
     }
   }, [isAuthenticated, isLoading]);
@@ -68,7 +68,7 @@ const RedirectApp: React.FC = () => {
 
   return (
     <Stack>
-      <Stack.Screen name="(auth)/verification" options={{ headerShown: false }} />
+      <Stack.Screen name="index" options={{ headerShown: false }}  />
     </Stack>
   );
 }

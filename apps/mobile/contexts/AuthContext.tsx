@@ -111,7 +111,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       if (!token || token.trim().length < 10) return false;
 
-      const response = await fetch('https://Yuxins-Mac.local:8080/users/me', {
+      const response = await fetch('http://Yuxins-Mac.local:8080/users/me', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -145,7 +145,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const { refreshToken } = await getStoredTokens();
       if (!refreshToken) throw new Error('No refresh token available.');
       
-      const response = await fetch('https://Yuxins-Mac.local:8080/auth/refresh', {
+      const response = await fetch('http://Yuxins-Mac.local:8080/auth/refresh', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
