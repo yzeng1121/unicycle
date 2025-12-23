@@ -12,6 +12,7 @@ import {
 import { useState } from 'react';
 import { router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { DORMS } from "../../constants/Dorms";
 import { Dropdown } from '../../components/ui/Dropdown';
@@ -24,6 +25,8 @@ const RegisterPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // store tokens securely
@@ -234,36 +237,54 @@ const RegisterPage = () => {
           {/* password */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Password *</Text>
-            <Text>
+            <Text style={{ paddingBottom: 5 }}>
               Password must be 8+ characters, include uppercase letters, lowercase letters, numbers, and at least one special character.
             </Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Create a password (8+ characters)"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              autoCapitalize="none"
-              autoCorrect={false}
-              editable={!isLoading}
-              testID="passwordInput"
-            />
+            <View style={styles.passwordDisplay}>
+              <TextInput
+                style={{ flex: 1, padding: 15, fontSize: 16 }}
+                placeholder="Create a password (8+ characters)"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+                autoCorrect={false}
+                editable={!isLoading}
+                testID="passwordInput"
+              />
+              <MaterialCommunityIcons
+                name={showPassword ? 'eye' : 'eye-off'}
+                size={18}
+                color="#aaa"
+                style={{ paddingRight: 10 }}
+                onPress={() => setShowPassword(!showPassword)}
+              />
+            </View>
           </View>
 
           {/* confirm password */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Confirm Password *</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Confirm your password"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry
-              autoCapitalize="none"
-              autoCorrect={false}
-              editable={!isLoading}
-              testID="confirmPasswordInput"
-            />
+            <View style={styles.passwordDisplay}>
+              <TextInput
+                style={{ flex: 1, padding: 15, fontSize: 16 }}
+                placeholder="Confirm your password"
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                secureTextEntry={!showConfirmPassword}
+                autoCapitalize="none"
+                autoCorrect={false}
+                editable={!isLoading}
+                testID="confirmPasswordInput"
+              />
+              <MaterialCommunityIcons
+                name={showConfirmPassword ? 'eye' : 'eye-off'}
+                size={18}
+                color="#aaa"
+                style={{ paddingRight: 10 }}
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+              />
+            </View>
           </View>
 
 
@@ -335,6 +356,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderWidth: 1,
     borderColor: '#ddd',
+  },
+  passwordDisplay: {
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    backgroundColor: 'white', 
+    borderRadius: 8, 
+    borderWidth: 1, 
+    borderColor: '#ddd'
   },
   dormButton: {
     backgroundColor: 'white',
