@@ -119,13 +119,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
       });
 
-      // TODO: /users/me returns username as the user's email rather than actual username
-      // TODO: if response is NOT okay... double check whether refresh token is expired to refresh 
       if (response.ok) {
         const userData: User = await response.json();
+        console.log('User data received:', userData);
         setUser(userData);
         return true;
-      } 
+      }
+
+      console.log('Token verification failed with status:', response.status);
       const newAccessToken = await refreshAccessToken();
 
       if (newAccessToken) {
@@ -135,7 +136,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
       return false;
     } catch (error) {
-      console.error('Error verifying token:', token);
+      console.error('Network error during token verification:', error);
       return false;
     }
   }
@@ -143,8 +144,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const refreshAccessToken = async (): Promise<string | null> => {
     try {
       const { refreshToken } = await getStoredTokens();
-      if (!refreshToken) throw new Error('No refresh token available.');
-      
+      if (!refreshToken) {
+        console.log('No refresh token available');
+        throw new Error('No refresh token available.');
+      }
+
+      console.log('Attempting to refresh access token...');
       const response = await fetch('http://Yuxins-Mac.local:8080/auth/refresh', {
         method: 'POST',
         headers: {
@@ -153,15 +158,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         body: JSON.stringify({ refreshToken })
       });
 
+      console.log('Refresh token response status:', response.status);
+
       if (response.ok) {
         const data: AuthResponse = await response.json();
-        
+        console.log('Refresh token response data:', data);
+
         if (data.accessToken) {
           await SecureStore.setItemAsync('accessToken', data.accessToken);
           setAccessToken(data.accessToken);
           return data.accessToken;
         }
       }
+
+      const errorData = await response.text();
+      console.error('Failed to refresh token. Response:', errorData);
       throw new Error('Failed to refresh token.')
     } catch (error) {
       console.error('Error refreshing access token:', error);

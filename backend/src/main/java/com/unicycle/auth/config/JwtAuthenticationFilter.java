@@ -61,7 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             System.out.println("JWT found, userId: " + userId);
-            System.out.println("Current authentication: " + authentication); // TODO: is null bro
+            System.out.println("Current authentication: " + authentication);
 
             if (userId != null && authentication == null) {
                 UserDetails userDetails = this.jwtUserDetailsService.loadUserByUserId(userId);
@@ -82,6 +82,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                    System.out.println("New authentication: " + SecurityContextHolder.getContext().getAuthentication());
+                    System.out.println("User principal: " + SecurityContextHolder.getContext().getAuthentication().getPrincipal());
                     System.out.println("JWT validated, user authenticated");
                 }
             }

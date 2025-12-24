@@ -6,6 +6,8 @@ import java.util.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -38,23 +40,33 @@ public class User implements UserDetails {
     private String lastName;
     @Column(nullable = false)
     private String dorm;
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, name = "username")
     private String username;
-    @Column(unique = true, nullable = false) 
+    @Column(unique = true, nullable = false)
     private String email;
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
+    @JsonIgnore
     private boolean enabled;
+    @JsonIgnore
     @Column(name = "verification_code")
     private String verificationCode;
+    @JsonIgnore
     @Column(name = "verification_expiration")
     private LocalDateTime verificationCodeExpiresAt;
 
-    // TODO: confusion (leads to extracting user email twice (/users/me username + email))
-    // NOTE: actually returns email as a username instead of username itself
+    // Returns the actual username field (not email)
+    public String getRealUsername() {
+        return this.username;
+    }
+
+    // UserDetails interface requires this to return the authentication principal
+    // For authentication, we use email as the username
+    @JsonIgnore
     @Override
     public String getUsername() {
-        return this.email; // return email instead of username
+        return this.email; // return email for authentication
     }
 
     public UUID getUserId() {

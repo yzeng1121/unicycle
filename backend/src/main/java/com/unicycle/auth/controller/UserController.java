@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.unicycle.auth.dto.CurrentUserDto;
 import com.unicycle.auth.entity.User;
 import com.unicycle.auth.repository.UserRepository;
 import com.unicycle.auth.service.UserService;
@@ -33,14 +34,20 @@ public class UserController {
         this.userProfilesRepository = userProfilesRepository;
     }
 
-    // TODO: this is mainly used for testing, so will need to modify to cater to
-    // TODO: error username == email == 'user's email'
-    // the purpose of my app
     @GetMapping("/me")
-    public ResponseEntity<User> authenticatedUser() {
+    public ResponseEntity<CurrentUserDto> authenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
-        return ResponseEntity.ok(currentUser);
+
+        CurrentUserDto userDto = CurrentUserDto.builder()
+            .userId(currentUser.getUserId())
+            .email(currentUser.getEmail())
+            .username(currentUser.getRealUsername())
+            .firstName(currentUser.getFirstName())
+            .lastName(currentUser.getLastName())
+            .build();
+
+        return ResponseEntity.ok(userDto);
     }
 
     // TODO: this function should NOT be public for any users besides amin

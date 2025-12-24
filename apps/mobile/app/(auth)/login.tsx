@@ -1,23 +1,14 @@
-import { 
-  View,
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  StyleSheet, 
-  ScrollView, 
-  Alert 
-} from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import { useState, useEffect } from 'react';
 import { router } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-// TODO: make so light mode and dark mode looks same
 const login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   
   const { login: authLogin } = useAuth();
 
@@ -169,7 +160,7 @@ const login = () => {
               testID="passwordInput"
             />
             <MaterialCommunityIcons
-              name={showPassword ? 'eye' : 'eye-off'}
+              name={showPassword ? 'eye-off' : 'eye'}
               size={18}
               color="#aaa"
               style={{ paddingRight: 10 }}
@@ -237,7 +228,7 @@ const styles = StyleSheet.create({
     color: '#353a22ff',
   },
   inputGroup: {
-    marginBottom: 20
+    marginBottom: 20,
   },
   label: {
     fontSize: 16,
@@ -301,7 +292,7 @@ const styles = StyleSheet.create({
   registerLinkText: {
     color: '#494e32ff',
     fontSize: 16,
-  }
+  },
 });
 
 export default login;

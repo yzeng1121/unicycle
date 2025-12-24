@@ -1,5 +1,6 @@
 {
   "expo": {
+    "jsEngine": "hermes",
     "name": "UniCycle",
     "slug": "unicycle_v1",
     "version": "1.0.0",

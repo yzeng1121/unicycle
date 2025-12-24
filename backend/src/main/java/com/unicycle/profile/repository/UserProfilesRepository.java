@@ -34,13 +34,10 @@ public interface UserProfilesRepository extends JpaRepository<Profile, UUID> {
     UUID getProfileIdByUserId(@Param("userId") UUID userId);
 
     @Modifying
-    @Transactional
     @Query("UPDATE Profile p SET p.profileImage = NULL WHERE p.profileId = :profileId")
     void clearProfileImageByProfileId(@Param("profileId") UUID profileId);
 
-    // TODO: change from STRING (temporary) to UUID
     @Modifying
-    @Transactional
     @Query(value = "UPDATE user_profiles SET listings = array_append(listings, :listingId) WHERE profile_id = :profileId", nativeQuery = true)
     void addListingToProfile(@Param("profileId") UUID profileId, @Param("listingId") UUID listingId);
 

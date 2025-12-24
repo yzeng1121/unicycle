@@ -28,7 +28,6 @@ import com.unicycle.profile.repository.UserProfilesRepository;
 import com.unicycle.profile.service.ProfileService;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @RequestMapping("/profiles")
@@ -148,8 +147,6 @@ public class ProfileController {
     }
 
     // UPDATE a user's profile image
-    // TODO: set s3 URL in database to the new one
-    @Transactional
     @PatchMapping("/{profileId}/update/profile-image")
     public ResponseEntity<?> updateProfileImage(@PathVariable UUID profileId, @RequestParam("profileImage") MultipartFile newProfileImage) throws Exception {
         System.out.println("Entered the 'update profile image' endpoint...");
@@ -157,16 +154,16 @@ public class ProfileController {
 
         System.out.println("s3URL = " + s3URL);
 
-        if (s3URL != null) {
-            System.out.println("Image successfully deleted from S3 bucket.");
+        if (s3URL != null && s3URL.length() > 0) {
+            System.out.println("Deleting old image from S3 bucket.");
             s3Service.deleteFileByUrl(s3URL);
         } else {
             System.out.println("This user has no profile image.");
         }
-     
+
         if (newProfileImage != null && !newProfileImage.isEmpty()) {
             String newS3URL = imageUploadService.uploadSingleImage(newProfileImage, "profile-images");
-            userProfilesRepository.updateS3URLInUserProfilesTableByProfileId(profileId, newS3URL);
+            profileService.updateProfileImage(profileId, newS3URL);
         } else {
             System.out.println("No new profile image provided.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -183,17 +180,16 @@ public class ProfileController {
     public ResponseEntity<?> deleteProfileImage(@PathVariable UUID profileId) throws Exception {
         String s3URL = userProfilesRepository.getS3URLInUserProfilesTableByProfileId(profileId);
 
-        // TODO: need to also delete from database
         if (s3URL != null) {
             System.out.println("Image successfully deleted from S3 bucket.");
             s3Service.deleteFileByUrl(s3URL);
-            userProfilesRepository.clearProfileImageByProfileId(profileId);
+            profileService.clearProfileImage(profileId);
         } else {
             System.out.println("This user has no profile image.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body("User profile is not found.");
         }
-     
+
         UUID userId = userProfilesRepository.getUserIdByProfileId(profileId);
         MyProfileDto updatedProfile = profileService.getMyProfile(userId);
         return ResponseEntity.ok(updatedProfile);

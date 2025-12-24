@@ -232,10 +232,6 @@ const profile = () => {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'SHOP':
-        console.log(`=== RENDERING SHOP TAB ===`);
-        console.log(`myProfile exists:`, !!myProfile);
-        console.log(`myProfile.listings:`, myProfile?.listings);
-        console.log(`myProfile.listings length:`, myProfile?.listings?.length);
         return (
           <View style={styles.gridContainer}>
             {myProfile?.listings && myProfile.listings.length > 0 ? (
@@ -359,7 +355,6 @@ const profile = () => {
   };
 
   const openImageLibrary = async () => {
-    console.log("Opening photo library...")
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       allowsEditing: true,

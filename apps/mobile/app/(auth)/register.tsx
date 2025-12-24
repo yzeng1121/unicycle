@@ -253,7 +253,7 @@ const RegisterPage = () => {
                 testID="passwordInput"
               />
               <MaterialCommunityIcons
-                name={showPassword ? 'eye' : 'eye-off'}
+                name={showPassword ? 'eye-off' : 'eye'}
                 size={18}
                 color="#aaa"
                 style={{ paddingRight: 10 }}
@@ -278,7 +278,7 @@ const RegisterPage = () => {
                 testID="confirmPasswordInput"
               />
               <MaterialCommunityIcons
-                name={showConfirmPassword ? 'eye' : 'eye-off'}
+                name={showConfirmPassword ? 'eye-off' : 'eye'}
                 size={18}
                 color="#aaa"
                 style={{ paddingRight: 10 }}

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.unicycle.auth.dto.RegisterUserDto;
 import com.unicycle.auth.entity.User;
@@ -137,6 +138,16 @@ public class ProfileService {
             .build();
 
         return publicProfileDto;
+    }
+
+    @Transactional
+    public void updateProfileImage(UUID profileId, String newS3URL) {
+        userProfilesRepository.updateS3URLInUserProfilesTableByProfileId(profileId, newS3URL);
+    }
+
+    @Transactional
+    public void clearProfileImage(UUID profileId) {
+        userProfilesRepository.clearProfileImageByProfileId(profileId);
     }
 
     private boolean isNotEmpty(List<?> list) {
