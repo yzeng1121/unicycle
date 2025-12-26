@@ -1,4 +1,4 @@
-package com.unicycle.shared.exception;
+package com.unicycle.exception;
 
 public class ProfileNotFoundException extends RuntimeException {
     public ProfileNotFoundException(String message) {

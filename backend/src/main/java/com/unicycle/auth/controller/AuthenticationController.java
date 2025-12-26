@@ -17,6 +17,7 @@ import com.unicycle.auth.service.AuthenticationService;
 import com.unicycle.auth.service.JwtService;
 import com.unicycle.auth.service.RefreshTokenService;
 import com.unicycle.auth.service.UserService;
+import com.unicycle.exception.ExpiredVerificationException;
 import com.unicycle.profile.service.ProfileService;
 import com.unicycle.profile.entity.Profile;
 
@@ -37,19 +38,13 @@ public class AuthenticationController {
     private final UserService userService;
     private final ProfileService profileService;
 
-    // TODO: after a user successfully signs up, they should have an associated default
-    // user profile on the database
+    private static final int ACCESS_TOKEN_EXPIRY_MINUTES = 15;
+
     @PostMapping("/signup")
     public ResponseEntity<?> register(@RequestBody RegisterUserDto registerUserDto) {
         try {
             User registeredUser = authenticationService.signup(registerUserDto);
-            Profile initializedProfile = profileService.initializeProfile(registeredUser.getUserId());
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("user", registeredUser);
-            response.put("profile", initializedProfile);
-            
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(buildRegisterResponse(registeredUser));
         } catch (DataIntegrityViolationException e) {
             if (e.getMessage().contains("unique_username")) {
                 return ResponseEntity.status(403).body(
@@ -62,36 +57,35 @@ public class AuthenticationController {
         }
     }
 
+    private Map<String, Object> buildRegisterResponse(User registeredUser) {
+        Profile initializedProfile = profileService.initializeProfile(registeredUser.getUserId());
+        Map<String, Object> response = new HashMap<>();
+        response.put("user", registeredUser);
+        response.put("profile", initializedProfile);
+        
+        return response;
+    }
+
     // TODO: logging in an unverified user leads to 403 code
     // TODO: currently each time user logs in, a new refreshToken is created --> long term implications/storage factor
     @PostMapping("/login")
-    public ResponseEntity<?> authenticate(@RequestBody LoginUserDto loginUserDto) {
-        try {
-            User authenticatedUser = authenticationService.authenticate(loginUserDto);
-            
-            String accessToken = jwtService.generateAccessToken(authenticatedUser);
-            RefreshToken refreshToken = refreshTokenService.createRefreshToken(authenticatedUser);
-            
-            UserDto userDto = mapToUserDto(authenticatedUser);
-       
-            AuthenticationResponse response = new AuthenticationResponse(
-                accessToken,
-                refreshToken.getToken(),
-                userDto,
-                LocalDateTime.now().plusMinutes(15) // Access token expiration
-            );
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            // TODO: Handle your existing 403 logic for unverified users
-            if (e.getMessage().contains("not verified") || e.getMessage().contains("disabled")) {
-                return ResponseEntity.status(403).body(
-                    Map.of("message", "Account not verified")
-                );
-            }
-            return ResponseEntity.status(401).body(
-                Map.of("message", e.getMessage())
-            );
-        }
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody LoginUserDto loginUserDto) {
+        User authenticatedUser = authenticationService.authenticate(loginUserDto);
+        return ResponseEntity.ok(buildAuthResponse(authenticatedUser));
+    }
+
+    private AuthenticationResponse buildAuthResponse(User authenticatedUser) {
+        String accessToken = jwtService.generateAccessToken(authenticatedUser);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(authenticatedUser);
+        UserDto userDto = mapToUserDto(authenticatedUser);
+    
+        AuthenticationResponse response = new AuthenticationResponse(
+            accessToken,
+            refreshToken.getToken(),
+            userDto,
+            LocalDateTime.now().plusMinutes(ACCESS_TOKEN_EXPIRY_MINUTES) // Access token expiration
+        );
+        return response;
     }
 
     // generates new access token
@@ -101,29 +95,29 @@ public class AuthenticationController {
         
         // checks if token is valid
         if (!refreshTokenService.validateRefreshToken(refreshTokenValue)) {
-            return ResponseEntity.status(401).body(
-                Map.of("message", "Invalid or expired refresh token")
-            );
+            throw new ExpiredVerificationException("Invalid or expired refresh token.");
         }
         
         try {
             UUID userId = jwtService.extractUserId(refreshTokenValue);
             // TODO: error here because tries to find user by email but actually gives username
-            User user = userService.findByUserId(userId);
-            
-            String newAccessToken = jwtService.generateAccessToken(user);
-            
-            AccessTokenResponse response = new AccessTokenResponse(
-                newAccessToken,
-                LocalDateTime.now().plusMinutes(15)
-            );
-            
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(buildAccessTokenResponse(userId));
         } catch (Exception e) {
             return ResponseEntity.status(401).body(
                 Map.of("message", "Token refresh failed")
             );
         }
+    }
+
+    private AccessTokenResponse buildAccessTokenResponse(UUID userId) {
+        User user = userService.findByUserId(userId);
+        String newAccessToken = jwtService.generateAccessToken(user);
+        
+        AccessTokenResponse response = new AccessTokenResponse(
+            newAccessToken,
+            LocalDateTime.now().plusMinutes(ACCESS_TOKEN_EXPIRY_MINUTES)
+        );
+        return response;
     }
 
     @PostMapping("/logout")
@@ -140,12 +134,8 @@ public class AuthenticationController {
     // Keep your existing verification endpoints
     @PostMapping("/verify")
     public ResponseEntity<?> verifyUser(@RequestBody VerifyUserDto verifyUserDto) {
-        try {
-            authenticationService.verifyUser(verifyUserDto);
-            return ResponseEntity.ok("Account verified successfully.");
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        authenticationService.verifyUser(verifyUserDto);
+        return ResponseEntity.ok("Account verified successfully.");
     }
 
     // TODO: implement get access token
@@ -156,12 +146,8 @@ public class AuthenticationController {
 
     @PostMapping("/resend")
     public ResponseEntity<?> resendVerificationCode(@RequestBody Map<String, String> body) {
-        try {
-            authenticationService.resendVerificationCode(body.get("email"));
-            return ResponseEntity.ok("Verification code sent.");
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        authenticationService.resendVerificationCode(body.get("email"));
+        return ResponseEntity.ok("Verification code sent.");
     }
 
     // TODO: reset password 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.unicycle.auth.entity.User;
 import com.unicycle.auth.repository.UserRepository;
+import com.unicycle.exception.UserNotFoundException;
 
 @Service
 public class UserService {
@@ -27,12 +28,12 @@ public class UserService {
 
     public User findByUserId(UUID userId) {
         return userRepository.findByUserId(userId)
-            .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+            .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
     }
 
     public User findByEmail(String userEmail) {
         return userRepository.findByEmail(userEmail)
-            .orElseThrow(() -> new RuntimeException("User not found with email: " + userEmail));
+            .orElseThrow(() -> new UserNotFoundException("User not found with email: " + userEmail));
     }
 }
 

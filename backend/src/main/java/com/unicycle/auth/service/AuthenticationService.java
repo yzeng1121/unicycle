@@ -15,6 +15,13 @@ import com.unicycle.auth.dto.VerifyUserDto;
 import com.unicycle.auth.entity.User;
 import com.unicycle.auth.repository.UserRepository;
 
+import com.unicycle.exception.InvalidCredentialsException;
+import com.unicycle.exception.UserNotFoundException;
+import com.unicycle.exception.UserNotVerifiedException;
+import com.unicycle.exception.InvalidVerificationException;
+import com.unicycle.exception.UserAlreadyVerifiedException;
+import com.unicycle.exception.ExpiredVerificationException;
+
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 
@@ -26,6 +33,8 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
 
+    private static final int ACCESS_TOKEN_EXPIRY_MINUTES = 15;
+
     public User signup(RegisterUserDto input) {
         User user = User.builder()
             .firstName(input.getFirstName())
@@ -35,8 +44,7 @@ public class AuthenticationService {
             .email(input.getEmail())
             .password(passwordEncoder.encode(input.getPassword()))
             .build(); 
-        user.setVerificationCode(generateVerificationCode());
-        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+        setNewVerificationCode(user);
         user.setEnabled(false);
         
         sendVerificationEmail(user);
@@ -45,14 +53,12 @@ public class AuthenticationService {
 
     public User authenticate(LoginUserDto input) {
         User user = userRepository.findByEmail(input.getEmail())
-            .orElseThrow(() -> new RuntimeException("User not found."));
+            .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
 
         if (!user.isEnabled()) {
-            throw new RuntimeException("Account not verified. Please verify your account.");
+            throw new UserNotVerifiedException("Account not verified. Please verify your account.");
         }
 
-        System.out.println("input.getEmail = " + input.getEmail());
-        System.out.println("input.getPassword = " + input.getPassword());
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 input.getEmail(),
@@ -63,41 +69,29 @@ public class AuthenticationService {
     }
 
     public void verifyUser(VerifyUserDto input) {
-        Optional<User> optionalUser = userRepository.findByEmail(input.getEmail());
+        User user = getUserByEmailOrThrow(input.getEmail());
+        if (user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new ExpiredVerificationException("Verification code has expired.");
+        }
 
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            if (user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
-                throw new RuntimeException("Verification code has expired.");
-            }
-
-            if (user.getVerificationCode().equals(input.getVerificationCode())) {
-                user.setEnabled(true);
-                user.setVerificationCode(null);
-                user.setVerificationCodeExpiresAt(null);
-                userRepository.save(user);
-            } else {
-                throw new RuntimeException("Invalid verification code.");
-            }
+        if (user.getVerificationCode().equals(input.getVerificationCode())) {
+            user.setEnabled(true);
+            user.setVerificationCode(null);
+            user.setVerificationCodeExpiresAt(null);
+            userRepository.save(user);
         } else {
-            throw new RuntimeException("User not found.");
+            throw new InvalidVerificationException("Invalid verification code.");
         }
     }
 
     public void resendVerificationCode(String email) {
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            if (user.isEnabled()) {
-                throw new RuntimeException("Account is already verified.");
-            }
-            user.setVerificationCode(generateVerificationCode());
-            user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
-            sendVerificationEmail(user);
-            userRepository.save(user);
-        } else {
-            throw new RuntimeException("User not found.");
+        User user = getUserByEmailOrThrow(email);
+        if (user.isEnabled()) {
+            throw new UserAlreadyVerifiedException("Account is already verified.");
         }
+        setNewVerificationCode(user);
+        sendVerificationEmail(user);
+        userRepository.save(user);
     }
 
     // TODO customize message and UI below
@@ -129,5 +123,15 @@ public class AuthenticationService {
         Random random = new Random();
         int code = random.nextInt(900000) + 10000; 
         return String.valueOf(code);
+    }
+
+    private User getUserByEmailOrThrow(String email) {
+        return userRepository.findByEmail(email)
+            .orElseThrow(() -> new UserNotFoundException("User not found."));
+    }
+
+    private void setNewVerificationCode(User user) {
+        user.setVerificationCode(generateVerificationCode());
+        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(ACCESS_TOKEN_EXPIRY_MINUTES));
     }
 }
