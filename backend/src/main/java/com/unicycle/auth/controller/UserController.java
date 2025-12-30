@@ -73,11 +73,6 @@ public class UserController {
                 .profileImageUrl(userProfileDto.getProfileImage())
                 .build();
 
-            // return ResponseEntity.ok(Map.of(
-            //     "success", true,
-            //     "imageUrl", headerProfile,
-            //     "message", "User: " + headerProfile + " fetched."
-            // ));
             return ResponseEntity.ok(headerProfile);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of(
