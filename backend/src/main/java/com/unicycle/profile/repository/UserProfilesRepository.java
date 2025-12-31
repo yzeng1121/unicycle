@@ -11,14 +11,12 @@ import org.springframework.stereotype.Repository;
 import com.unicycle.profile.dto.UserProfileDto;
 import com.unicycle.profile.entity.Profile;
 
-import jakarta.transaction.Transactional;
-
 @Repository
 public interface UserProfilesRepository extends JpaRepository<Profile, UUID> {
     // TODO: add querying methods here (if not too complicated may just be able to extend from CRUD repo)
     // fetch user profile data from user_profiles table in DB
-    @Query("SELECT p.profileId, p.profileImage, p.listings, p.savedListings, p.purchased, p.followers, p.following, p.rating, p.followerCount, p.followingCount FROM Profile p WHERE p.userId = :id")
-    UserProfileDto getUserInUserProfilesTableByUserId(@Param("id") UUID id);
+    @Query("SELECT p.profileId, p.profileImage, p.listings, p.savedListings, p.purchased, p.followers, p.following, p.rating, p.followerCount, p.followingCount FROM Profile p WHERE p.userId = :userId")
+    UserProfileDto getUserProfileDtoByUserId(@Param("id") UUID userId);
 
     @Query("SELECT p.profileImage FROM Profile p WHERE p.profileId = :id")
     String getS3URLInUserProfilesTableByProfileId(@Param("id") UUID id);

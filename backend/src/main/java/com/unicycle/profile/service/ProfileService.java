@@ -12,6 +12,7 @@ import com.unicycle.auth.dto.RegisterUserDto;
 import com.unicycle.auth.entity.User;
 import com.unicycle.auth.repository.UserRepository;
 import com.unicycle.exception.ProfileNotFoundException;
+import com.unicycle.exception.UserNotFoundException;
 import com.unicycle.listings.service.ImageUploadService;
 import com.unicycle.profile.dto.MyProfileDto;
 import com.unicycle.profile.dto.ProfileDto;
@@ -126,6 +127,16 @@ public class ProfileService {
         return publicProfileDto;
     }
 
+    public UserProfileDto getUserProfileDto(UUID userId) {
+        UserProfileDto userProfileDto = userProfilesRepository.getUserProfileDtoByUserId(userId);
+        if (userProfileDto == null) throw new ProfileNotFoundException("Profile not found with userId: " + userId);
+        return userProfileDto;
+    }
+
+    public String getProfileImage(UUID profileId) {
+        return userProfilesRepository.getProfileImage(profileId);
+    }
+
     @Transactional
     public void updateProfileImage(UUID profileId, String newS3URL) {
         userProfilesRepository.updateS3URLInUserProfilesTableByProfileId(profileId, newS3URL);
@@ -137,8 +148,8 @@ public class ProfileService {
     }
 
     private ProfileData fetchUserProfileData(UUID userId) {
-        UserBasicDto userBasicDto = userRepository.getUserInUsersTableByUserId(userId);
-        UserProfileDto userProfileDto = userProfilesRepository.getUserInUserProfilesTableByUserId(userId);
+        UserBasicDto userBasicDto = userRepository.getUserBasicDtoByUserId(userId);
+        UserProfileDto userProfileDto = userProfilesRepository.getUserProfileDtoByUserId(userId);
         
         if (userBasicDto == null || userProfileDto == null) {
             if (userBasicDto == null) System.out.println("userBasicDto is null");

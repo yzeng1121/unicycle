@@ -49,6 +49,7 @@ const login = () => {
 
       const responseData = await response.json();
 
+      // TODO: access & refresh tokens are NOT generated upon signing up so consider removing the validation check
       if (response.status === 200) {
         const { accessToken, refreshToken } = responseData;
         

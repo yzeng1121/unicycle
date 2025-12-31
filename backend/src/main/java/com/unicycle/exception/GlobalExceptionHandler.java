@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.util.Map;
 
 @RestControllerAdvice
-public class AuthExceptionHandler {
+public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotVerifiedException.class)
     public ResponseEntity<?> handleNotVerified(UserNotVerifiedException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
@@ -46,6 +46,12 @@ public class AuthExceptionHandler {
             .body(Map.of("message", e.getMessage()));
     }
 
+    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    public ResponseEntity<?> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+            .body(Map.of("message", e.getMessage()));
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<?> handleUserNotFoundException(UserNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -58,4 +64,15 @@ public class AuthExceptionHandler {
             .body(Map.of("message", e.getMessage()));
     }
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, String>> handleDataIntegrity(DataIntegrityViolationException e) {
+        return ResponseEntity.badRequest()
+            .body(Map.of("message", "Invalid data."));
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<?> handleEmailAlreadyExistsException(EmailAlreadyExistsException e) {
+        return ResponseEntity.badRequest()
+            .body(Map.of("message", e.getMessage()));
+    }
 }

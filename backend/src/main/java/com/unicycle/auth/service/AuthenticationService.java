@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.unicycle.auth.dto.LoginUserDto;
 import com.unicycle.auth.dto.RegisterUserDto;
+import com.unicycle.auth.dto.RegisterUserResponse;
 import com.unicycle.auth.dto.VerifyUserDto;
 import com.unicycle.auth.entity.User;
 import com.unicycle.auth.repository.UserRepository;
@@ -18,11 +19,17 @@ import com.unicycle.auth.repository.UserRepository;
 import com.unicycle.exception.InvalidCredentialsException;
 import com.unicycle.exception.UserNotFoundException;
 import com.unicycle.exception.UserNotVerifiedException;
+import com.unicycle.exception.UsernameAlreadyExistsException;
+import com.unicycle.profile.dto.UserBasicDto;
+import com.unicycle.profile.entity.Profile;
+import com.unicycle.profile.service.ProfileService;
 import com.unicycle.exception.InvalidVerificationException;
 import com.unicycle.exception.UserAlreadyVerifiedException;
 import com.unicycle.exception.ExpiredVerificationException;
+import com.unicycle.exception.EmailAlreadyExistsException;
 
 import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -31,11 +38,20 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final ProfileService profileService;
     private final EmailService emailService;
 
     private static final int ACCESS_TOKEN_EXPIRY_MINUTES = 15;
 
-    public User signup(RegisterUserDto input) {
+    @Transactional
+    public RegisterUserResponse signup(RegisterUserDto input) {
+        if (userRepository.existsByUsername(input.getUsername())) {
+            throw new UsernameAlreadyExistsException("Username already exists.");
+        }
+        if (userRepository.existsByEmail(input.getEmail())) {
+            throw new EmailAlreadyExistsException("Email already exists.");
+        }
+
         User user = User.builder()
             .firstName(input.getFirstName())
             .lastName(input.getLastName())
@@ -48,7 +64,19 @@ public class AuthenticationService {
         user.setEnabled(false);
         
         sendVerificationEmail(user);
-        return userRepository.save(user);
+        userRepository.save(user);
+
+        UserBasicDto dto = UserBasicDto.builder()
+            .username(user.getUsername())
+            .firstName(user.getFirstName())
+            .lastName(user.getLastName())
+            .dorm(user.getDorm())
+            .build();
+
+        Profile initializedProfile = profileService.initializeProfile(user.getUserId());
+
+        RegisterUserResponse response = new RegisterUserResponse(dto, initializedProfile);
+        return response;
     }
 
     public User authenticate(LoginUserDto input) {

@@ -21,9 +21,15 @@ public interface UserRepository extends CrudRepository<User, UUID> {
     Optional<User> findByVerificationCode(String verificationCode);
     
     // fetch basic user data from users table in DB 
-    @Query("SELECT u.username, u.firstName, u.lastName, u.dorm FROM User u WHERE u.id = :id")
-    UserBasicDto getUserInUsersTableByUserId(@Param("id") UUID id);
+    @Query("SELECT u.username, u.firstName, u.lastName, u.dorm FROM User u WHERE u.userId = :userId")
+    UserBasicDto getUserBasicDtoByUserId(@Param("userId") UUID userId);
 
-    @Query("SELECT u.username FROM User u WHERE u.id = :id")
-    String getUsernameByUserId(@Param("id") UUID id);
+    @Query("SELECT u.username FROM User u WHERE u.userId = :userId")
+    String getUsernameByUserId(@Param("id") UUID userId);
+
+    @Query("SELECT CASE WHEN EXISTS (SELECT 1 FROM User u WHERE u.username = :username) THEN true ELSE false END")
+    boolean existsByUsername(String username);
+
+    @Query("SELECT CASE WHEN EXISTS (SELECT 1 FROM User u WHERE u.email = :email) THEN true ELSE false END")
+    boolean existsByEmail(String email);
 }

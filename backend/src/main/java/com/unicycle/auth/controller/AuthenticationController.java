@@ -1,6 +1,5 @@
 package com.unicycle.auth.controller;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,6 +8,7 @@ import com.unicycle.auth.dto.AuthenticationResponse;
 import com.unicycle.auth.dto.LoginUserDto;
 import com.unicycle.auth.dto.RefreshTokenRequest;
 import com.unicycle.auth.dto.RegisterUserDto;
+import com.unicycle.auth.dto.RegisterUserResponse;
 import com.unicycle.auth.dto.UserDto;
 import com.unicycle.auth.dto.VerifyUserDto;
 import com.unicycle.auth.entity.RefreshToken;
@@ -18,13 +18,10 @@ import com.unicycle.auth.service.JwtService;
 import com.unicycle.auth.service.RefreshTokenService;
 import com.unicycle.auth.service.UserService;
 import com.unicycle.exception.ExpiredVerificationException;
-import com.unicycle.profile.service.ProfileService;
-import com.unicycle.profile.entity.Profile;
 
 import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -36,34 +33,12 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final RefreshTokenService refreshTokenService;
     private final UserService userService;
-    private final ProfileService profileService;
 
     private static final int ACCESS_TOKEN_EXPIRY_MINUTES = 15;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> register(@RequestBody RegisterUserDto registerUserDto) {
-        try {
-            User registeredUser = authenticationService.signup(registerUserDto);
-            return ResponseEntity.ok(buildRegisterResponse(registeredUser));
-        } catch (DataIntegrityViolationException e) {
-            if (e.getMessage().contains("unique_username")) {
-                return ResponseEntity.status(403).body(
-                    Map.of("message", "Username already exists")
-                );
-            }
-            return ResponseEntity.status(401).body(
-                Map.of("message", e.getMessage())
-            );
-        }
-    }
-
-    private Map<String, Object> buildRegisterResponse(User registeredUser) {
-        Profile initializedProfile = profileService.initializeProfile(registeredUser.getUserId());
-        Map<String, Object> response = new HashMap<>();
-        response.put("user", registeredUser);
-        response.put("profile", initializedProfile);
-        
-        return response;
+    public ResponseEntity<RegisterUserResponse> register(@RequestBody RegisterUserDto registerUserDto) {
+        return ResponseEntity.ok(authenticationService.signup(registerUserDto));
     }
 
     // TODO: logging in an unverified user leads to 403 code
@@ -120,6 +95,7 @@ public class AuthenticationController {
         return response;
     }
 
+    // TODO: tighten the response entity types from ? -> an actual object
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestBody RefreshTokenRequest request) {
         String refreshToken = request.getRefreshToken();
