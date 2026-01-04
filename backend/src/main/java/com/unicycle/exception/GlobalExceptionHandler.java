@@ -10,12 +10,6 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(UserNotVerifiedException.class)
-    public ResponseEntity<?> handleNotVerified(UserNotVerifiedException e) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-            .body(Map.of("message", e.getMessage()));
-    }
-
     @ExceptionHandler(InvalidCredentialsException.class) 
     public ResponseEntity<?> handleInvalidCredentials(InvalidCredentialsException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -73,6 +67,67 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<?> handleEmailAlreadyExistsException(EmailAlreadyExistsException e) {
         return ResponseEntity.badRequest()
+            .body(Map.of("message", e.getMessage()));
+    }
+
+    // Image Uploading Exceptions 
+
+    @ExceptionHandler(ImageUploadingException.class)
+    public ResponseEntity<?> handleImageUploadingException(ImageUploadingException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(Map.of(
+                "message", e.getMessage(), 
+                "cause", e.getCause()
+            ));
+    }
+
+    @ExceptionHandler(UnspecifiedImageFolderException.class)
+    public ResponseEntity<?> handleUnspecifiedImageFolderException(UnspecifiedImageFolderException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(Map.of("message", e.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidImageContentsException.class)
+    public ResponseEntity<?> handleInvalidImageContentsException(InvalidImageContentsException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Map.of("message", e.getMessage()));
+    }
+
+    // Listing Related Exceptions
+
+    @ExceptionHandler(FailedToCreateListingException.class)
+    public ResponseEntity<?> handleFailedToCreateListingException(FailedToCreateListingException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(Map.of("message", e.getMessage()));
+    }
+
+    @ExceptionHandler(FailedToFetchListingException.class)
+    public ResponseEntity<?> handleFailedToFetchListingException(FailedToFetchListingException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(Map.of("message", e.getMessage()));
+    }
+
+    @ExceptionHandler(FailedToFetchCoverPhotoException.class)
+    public ResponseEntity<?> handleFailedToFetchCoverPhotoException(FailedToFetchCoverPhotoException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(Map.of("message", e.getMessage()));
+    }
+
+    @ExceptionHandler(ListingNotFoundException.class)
+    public ResponseEntity<?> handleListingNotFoundException(ListingNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(Map.of("message", e.getMessage()));
+    }
+
+    @ExceptionHandler(UnauthorizedListingAccessException.class)
+    public ResponseEntity<?> handleUnauthorizedListingAccessException(UnauthorizedListingAccessException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            .body(Map.of("message", e.getMessage()));
+    }
+
+    @ExceptionHandler(FailedToDeleteListingException.class)
+    public ResponseEntity<?> handleFailedToDeleteListingException(FailedToDeleteListingException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(Map.of("message", e.getMessage()));
     }
 }

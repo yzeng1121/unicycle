@@ -34,7 +34,6 @@ public class SecurityConfiguration {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/api/images/**").permitAll()
                 .requestMatchers("/api/listings/**").authenticated()
                 .requestMatchers("/profiles/**").authenticated()
                 .requestMatchers("/error").permitAll() // TODO: remove later for handling error fetching user w/ userID

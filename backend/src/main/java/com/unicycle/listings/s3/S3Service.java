@@ -4,6 +4,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.unicycle.exception.ImageUploadingException;
+import com.unicycle.exception.InvalidImageContentsException;
+import com.unicycle.exception.UnspecifiedImageFolderException;
+import com.unicycle.listings.entity.ImageFolder;
+
+import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -17,9 +23,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @Service
 public class S3Service {
-
     private final S3Client s3;
     
     @Value("${aws.s3.bucket}")
@@ -28,9 +34,10 @@ public class S3Service {
     @Value("${aws.region}")
     private String region;
 
-    public S3Service(S3Client s3) {
-        this.s3 = s3;
-    }
+    private static final List<String> ALLOWED_IMAGE_TYPES = Arrays.asList(
+        "image/jpeg", "image/jpg", "image/png", 
+        "image/gif", "image/webp", "image/heic", "image/heif"
+    );
 
     // puts file directly into AWS S3
     public void putObject(String bucketName, String key, MultipartFile file) throws IOException {
@@ -46,38 +53,27 @@ public class S3Service {
     }
 
     // High-level method for listing images (what your controller will use)
-    public String uploadListingImage(MultipartFile file) throws IOException {
+    public String uploadImage(MultipartFile file, String folder) {
         validateImageFile(file);
         
         String fileName = generateUniqueFileName(file.getOriginalFilename());
-        String key = "listings/" + fileName;
+        String key = folder + "/" + fileName;
         
-        putObject(bucketName, key, file);
-        return getPublicUrl(key);
-    }
-
-    // High-level method for profile images
-    public String uploadProfileImage(MultipartFile file) throws IOException {
-        validateImageFile(file);
-        
-        String fileName = generateUniqueFileName(file.getOriginalFilename());
-        String key = "profile-images/" + fileName;
-        
-        putObject(bucketName, key, file);
+        try {
+            putObject(bucketName, key, file);
+        } catch (IOException e) {
+            throw new ImageUploadingException("Failed to upload image", e.getCause());
+        }
         return getPublicUrl(key);
     }
 
     // Generic upload method
     // TODO: error check added because just incase fails
-    public String uploadFile(MultipartFile file, String folderType) throws IOException {
-        System.out.println("folderType: " + folderType);
-        
-        if (folderType.equals("listings")) {
-            return uploadListingImage(file); // Default to listing images
-        } else if (folderType.equals("profile-images")) {
-            return uploadProfileImage(file);
+    public String uploadFile(MultipartFile file, String folderType) {
+        if (folderType.equals(ImageFolder.LISTINGS.getImagePath()) || folderType.equals(ImageFolder.PROFILE_IMAGES.getImagePath())) {
+            return uploadImage(file, folderType);
         } else {
-            return "ERROR: unspecified folder to insert image in S3 bucket";
+            throw new UnspecifiedImageFolderException("Folder to store image not specified.");
         }
     }
 
@@ -115,28 +111,24 @@ public class S3Service {
     }
 
     // Helper method to validate image files
-    private void validateImageFile(MultipartFile file) throws IOException {
+    private void validateImageFile(MultipartFile file) {
         if (file.isEmpty()) {
-            throw new IOException("File is empty");
+            throw new InvalidImageContentsException("Image file is empty.");
         }
         
         if (file.getSize() > 10_000_000) { // 10MB limit
-            throw new IOException("File size exceeds 10MB limit");
+            throw new InvalidImageContentsException("Image file size exceeds 10MB limit.");
         }
         
         String contentType = file.getContentType();
         if (contentType == null || !isImageContentType(contentType)) {
-            throw new IOException("File must be an image (JPEG, PNG, GIF, WebP)");
+            throw new InvalidImageContentsException("Image file must be an image (JPEG, PNG, GIF, WebP).");
         }
     }
 
     // Helper method to check if content type is an image
     private boolean isImageContentType(String contentType) {
-        List<String> allowedTypes = Arrays.asList(
-            "image/jpeg", "image/jpg", "image/png", 
-            "image/gif", "image/webp", "image/heic", "image/heif"
-        );
-        return allowedTypes.contains(contentType.toLowerCase());
+        return ALLOWED_IMAGE_TYPES.contains(contentType.toLowerCase());
     }
 
     // Helper method to generate unique file names
@@ -157,11 +149,8 @@ public class S3Service {
     // Helper method to extract key from full S3 URL
     private String extractKeyFromUrl(String fileUrl) {
         try {
-            // Extract key from URL like: https://bucket.s3.region.amazonaws.com/key
             String baseUrl = String.format("https://%s.s3.%s.amazonaws.com/", bucketName, region);
-            if (fileUrl.startsWith(baseUrl)) {
-                return fileUrl.substring(baseUrl.length());
-            }
+            if (fileUrl.startsWith(baseUrl)) return fileUrl.substring(baseUrl.length());
         } catch (Exception e) {
             // Log error but don't throw
         }

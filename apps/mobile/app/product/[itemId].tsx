@@ -69,8 +69,7 @@ export default function ProductScreen() {
         
         if (response.ok) {
           console.log('Item successfully fetched from database...');
-          const responseData = await response.json();
-          const productData: Listing = responseData.listing;
+          const productData: Listing = await response.json();
           
           console.log("Fetched product data:", productData);
           setItem(productData);
@@ -149,6 +148,7 @@ export default function ProductScreen() {
     );
   }
 
+  // TODO: implement dis
   const editListing = async () => {
     
   }
@@ -172,9 +172,11 @@ export default function ProductScreen() {
       ]
     );
 
+    // TODO: should NOT be in the header bc if you somehow obtain someone elses' user ID,
+    //       you can very easily manipulate and delete someone elses' listing
     try {
       const result = await makeAuthenticatedRequest(
-        `http://Yuxins-Mac.local:8080/api/listings/${item.itemId}?userId=${userId}`,
+        `http://Yuxins-Mac.local:8080/api/listings/${item.itemId}`,
         {
           method: 'DELETE'
         }

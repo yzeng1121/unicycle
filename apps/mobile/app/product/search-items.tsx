@@ -47,6 +47,7 @@ const ProductGrid = () => {
   const handleNewSearch = async () => {
     if (searchText.trim()) {
       // Update the internal state directly
+      // TODO: is it rlly necessary to have user id embedded in URL?
       const newQuery = searchText.trim();
       
       console.log("The id of the user who's prompting a search is..." + user.userId);
@@ -72,6 +73,7 @@ const ProductGrid = () => {
     try {
       // const response = await makeAuthenticatedRequest('http://10.243.71.82:8080/api/listings/create', {
       // const response = await makeAuthenticatedRequest('http://192.168.86.46:8080/api/listings/create', {
+      // TODO: consider removing from the URL bc security issue
       console.log("UserId is " + user.userId);
       const response = await makeAuthenticatedRequest(
         `http://Yuxins-Mac.local:8080/api/listings/search?userId=${user.userId}&query=${encodeURIComponent(query)}`, {

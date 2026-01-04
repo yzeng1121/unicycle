@@ -7,12 +7,12 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import com.unicycle.listings.entity.Listing;
 import com.unicycle.listings.dto.ListingCardDto;
 
-@Service
+@Repository
 public interface ListingRepository extends JpaRepository<Listing, UUID> {
     @Query("SELECT l FROM Listing l WHERE l.itemId = :itemId")
     Optional<Listing> getListingInfo(@Param("itemId") UUID itemId);

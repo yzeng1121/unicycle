@@ -168,9 +168,9 @@ const profile = () => {
       console.log(`Listing ${listingId} response status:`, response.status);
 
       if (response.ok) {
-        const data = await response.json();
-        console.log(`Response data for ${listingId}:`, data);
-        return data.imageUrl;
+        const imageUrl = await response.json();
+        console.log(`Response data for ${listingId}:`, imageUrl);
+        return imageUrl;
       } else {
         console.log(`Failed to fetch listing ${listingId}: ${response.status}`);
       }

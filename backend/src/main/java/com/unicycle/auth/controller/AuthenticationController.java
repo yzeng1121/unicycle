@@ -99,11 +99,7 @@ public class AuthenticationController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestBody RefreshTokenRequest request) {
         String refreshToken = request.getRefreshToken();
-        
-        if (refreshToken != null) {
-            refreshTokenService.revokeToken(refreshToken);
-        }
-        
+        if (refreshToken != null) refreshTokenService.revokeToken(refreshToken);
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
 
