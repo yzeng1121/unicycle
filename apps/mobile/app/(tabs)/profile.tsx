@@ -180,6 +180,7 @@ const profile = () => {
     return "";
   }
 
+  // TODO: fetch public profile
   useEffect(() => {
     const fetchMyProfile = async () => {
       console.log("=== Starting profile fetch ===");
@@ -192,9 +193,7 @@ const profile = () => {
 
         if (response.ok) {
           const profileData: ProfileResponse = await response.json();
-        
           await fillMyProfile(profileData);
-
           setLoading(false);
         } else {
           setLoading(false);

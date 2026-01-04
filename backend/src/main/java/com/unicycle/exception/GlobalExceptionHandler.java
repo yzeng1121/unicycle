@@ -10,6 +10,9 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    // Authentication Related Exceptions
+
     @ExceptionHandler(InvalidCredentialsException.class) 
     public ResponseEntity<?> handleInvalidCredentials(InvalidCredentialsException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -67,6 +70,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<?> handleEmailAlreadyExistsException(EmailAlreadyExistsException e) {
         return ResponseEntity.badRequest()
+            .body(Map.of("message", e.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidBearerTokenException.class)
+    public ResponseEntity<?> handleInvalidBearerTokenException(InvalidBearerTokenException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
             .body(Map.of("message", e.getMessage()));
     }
 
@@ -128,6 +137,32 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(FailedToDeleteListingException.class)
     public ResponseEntity<?> handleFailedToDeleteListingException(FailedToDeleteListingException e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(Map.of("message", e.getMessage()));
+    }
+
+    // Profile Related Exceptions
+    
+    @ExceptionHandler(FailedToCreateProfileException.class)
+    public ResponseEntity<?> handleFailedToCreateProfileException(FailedToCreateProfileException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(Map.of("message", e.getMessage()));
+    }
+
+    @ExceptionHandler(FailedToFetchProfileException.class)
+    public ResponseEntity<?> handleFailedToFetchProfileException(FailedToFetchProfileException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(Map.of("message", e.getMessage()));
+    }
+
+    @ExceptionHandler(FailedToFetchUserProfilePhotoException.class)
+    public ResponseEntity<?> handleFailedToFetchUserProfilePhotoException(FailedToFetchUserProfilePhotoException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(Map.of("message", e.getMessage()));
+    }
+
+    @ExceptionHandler(UnauthorizedProfileAccessException.class)
+    public ResponseEntity<?> handleUnauthorizedProfileAccessException(UnauthorizedProfileAccessException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
             .body(Map.of("message", e.getMessage()));
     }
 }

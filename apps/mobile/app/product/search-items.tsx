@@ -71,8 +71,6 @@ const ProductGrid = () => {
      // TODO: query the database looking for specific keywords
       // brand, title are main keywords to search for
     try {
-      // const response = await makeAuthenticatedRequest('http://10.243.71.82:8080/api/listings/create', {
-      // const response = await makeAuthenticatedRequest('http://192.168.86.46:8080/api/listings/create', {
       // TODO: consider removing from the URL bc security issue
       console.log("UserId is " + user.userId);
       const response = await makeAuthenticatedRequest(

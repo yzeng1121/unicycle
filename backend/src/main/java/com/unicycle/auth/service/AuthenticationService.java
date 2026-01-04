@@ -73,7 +73,7 @@ public class AuthenticationService {
             .dorm(user.getDorm())
             .build();
 
-        Profile initializedProfile = profileService.initializeProfile(user.getUserId());
+        Profile initializedProfile = profileService.createProfile(user.getUserId());
 
         RegisterUserResponse response = new RegisterUserResponse(dto, initializedProfile);
         return response;

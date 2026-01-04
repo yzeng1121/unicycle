@@ -3,11 +3,10 @@ package com.unicycle.listings.service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
+
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.unicycle.listings.entity.ImageFolder;
@@ -25,7 +24,6 @@ import com.unicycle.listings.repository.ListingRepository;
 import com.unicycle.profile.repository.UserProfilesRepository;
 
 import jakarta.transaction.Transactional;
-import jakarta.persistence.EntityNotFoundException;
 
 @Service
 @Transactional
