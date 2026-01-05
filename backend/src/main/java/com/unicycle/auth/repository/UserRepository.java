@@ -15,21 +15,20 @@ import com.unicycle.profile.dto.UserBasicDto;
 public interface UserRepository extends CrudRepository<User, UUID> {
     // TODO: if login via either email or username would have to join the two
     // methods below
-    Optional<User> findByUserId(UUID userId);
     Optional<User> findByEmail(String email);
     Optional<User> findByUsername(String username);
     Optional<User> findByVerificationCode(String verificationCode);
+
+    @Query("SELECT u FROM User u WHERE u.userId = :userId")
+    Optional<User> findByUserId(@Param("userId") UUID userId);
     
-    // fetch basic user data from users table in DB 
-    @Query("SELECT u.username, u.firstName, u.lastName, u.dorm FROM User u WHERE u.userId = :userId")
+    // fetch basic user data from users table in DB
+    @Query("SELECT new com.unicycle.profile.dto.UserBasicDto(u.username, u.firstName, u.lastName, u.dorm) FROM User u WHERE u.userId = :userId")
     UserBasicDto getUserBasicDtoByUserId(@Param("userId") UUID userId);
 
     @Query("SELECT u.username FROM User u WHERE u.userId = :userId")
-    String getUsernameByUserId(@Param("id") UUID userId);
+    String getUsernameByUserId(@Param("userId") UUID userId);
 
-    @Query("SELECT CASE WHEN EXISTS (SELECT 1 FROM User u WHERE u.username = :username) THEN true ELSE false END")
     boolean existsByUsername(String username);
-
-    @Query("SELECT CASE WHEN EXISTS (SELECT 1 FROM User u WHERE u.email = :email) THEN true ELSE false END")
     boolean existsByEmail(String email);
 }

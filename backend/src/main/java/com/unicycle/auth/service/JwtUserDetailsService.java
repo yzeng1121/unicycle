@@ -28,7 +28,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUserId(UUID userId) throws UsernameNotFoundException {
         System.out.println("inside loadUserByUserId:: " + userId);
         
-        Optional<User> user = userRepository.findById(userId);
+        Optional<User> user = userRepository.findByUserId(userId);
         return user.orElseThrow(() -> new UsernameNotFoundException("User not found: " + userId));
     }
 }

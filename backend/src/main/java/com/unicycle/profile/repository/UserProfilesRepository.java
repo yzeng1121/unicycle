@@ -19,7 +19,7 @@ public interface UserProfilesRepository extends JpaRepository<Profile, UUID> {
     @Query("SELECT p.profileId, p.profileImage, p.listings, p.savedListings, p.purchased, p.followers, p.following, p.rating, p.followerCount, p.followingCount FROM Profile p WHERE p.userId = :userId")
     UserProfileDto getUserProfileDtoByUserId(@Param("id") UUID userId);
 
-    @Query("SELECT p.profileId, p.userId, p.profileImage, p.username, p.firstName, p.lastName, p.dorm, p.listings, p.savedListings, p.purchased, p.followers, p.following, p.rating, p.followerCount, p.followingCount FROM Profile p WHERE p.userId = :userId")
+    @Query("SELECT p.profileId, p.userId, p.profileImage, p.listings, p.savedListings, p.purchased, p.followers, p.following, p.rating, p.followerCount, p.followingCount FROM Profile p WHERE p.userId = :userId")
     MyProfileDto getMyProfileDtoByUserId(@Param("id") UUID userId);
 
     @Query("SELECT p.profileImage FROM Profile p WHERE p.profileId = :id")
