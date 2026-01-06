@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.unicycle.auth.entity.User;
 
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,14 +27,14 @@ public class JwtService {
     @Value("${security.jwt.refresh.expiration-time}") // 30 days
     private Long refreshTokenExpiration;
     
-    // Generate access token (short-lived)
+    // access token (short-lived)
     public String generateAccessToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("type", "access");
         return createToken(claims, userDetails, accessTokenExpiration);
     }
     
-    // Generate refresh token (long-lived)
+    // refresh token (long-lived)
     public String generateRefreshToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("type", "refresh");
@@ -46,15 +45,12 @@ public class JwtService {
     // assembles + delivers all the parts of a JWT string
     private String createToken(Map<String, Object> claims, UserDetails userDetails, Long expiration) {
         User user = (User) userDetails;
-
-        System.out.println("user.getUserId().toString(): " + user.getUserId().toString());
-
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(user.getUserId().toString())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .signWith(getSignInKey(), SignatureAlgorithm.ES256)
                 .compact();
     }
     
@@ -101,17 +97,12 @@ public class JwtService {
     }
     
     public boolean isRefreshToken(String token) {
-        if ("refresh".equals(extractTokenType(token))) {
-            System.out.println("is a refreshToken");
-        }
         return "refresh".equals(extractTokenType(token));
     }
 
     // TODO: is this change ok for security reasons?
     private Key getSignInKey() {
-        // byte[] keyBytes = java.util.Base64.getDecoder().decode(secretKey);
-        // return Keys.hmacShaKeyFor(keyBytes);
-        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
+        byte[] keyBytes = java.util.Base64.getDecoder().decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
