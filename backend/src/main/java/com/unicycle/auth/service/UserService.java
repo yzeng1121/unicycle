@@ -74,6 +74,8 @@ public class UserService {
         return userDto;
     }
 
+    // TODO: can just fetch profile URL rather than the ENTIRE user profile
+    // TODO: which user id?
     public HeaderProfileDto getHeaderProfileDto(UUID userId) {
         UserBasicDto userBasicDto = getUserBasicDto(userId); 
         UserProfileDto userProfileDto = profileService.getUserProfileDto(userId);

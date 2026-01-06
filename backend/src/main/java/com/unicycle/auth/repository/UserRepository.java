@@ -23,7 +23,7 @@ public interface UserRepository extends CrudRepository<User, UUID> {
     Optional<User> findByUserId(@Param("userId") UUID userId);
     
     // fetch basic user data from users table in DB
-    @Query("SELECT new com.unicycle.profile.dto.UserBasicDto(u.username, u.firstName, u.lastName, u.dorm) FROM User u WHERE u.userId = :userId")
+    @Query("SELECT new com.unicycle.profile.dto.UserBasicDto(u.userId, u.username, u.firstName, u.lastName, u.dorm) FROM User u WHERE u.userId = :userId")
     UserBasicDto getUserBasicDtoByUserId(@Param("userId") UUID userId);
 
     @Query("SELECT u.username FROM User u WHERE u.userId = :userId")

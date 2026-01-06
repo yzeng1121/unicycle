@@ -66,7 +66,7 @@ public class User implements UserDetails {
     @JsonIgnore
     @Override
     public String getUsername() {
-        return this.email; // return email for authentication
+        return this.username; // return email for authentication
     }
 
     public UUID getUserId() {

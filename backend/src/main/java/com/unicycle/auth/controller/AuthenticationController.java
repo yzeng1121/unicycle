@@ -19,6 +19,7 @@ import com.unicycle.auth.service.RefreshTokenService;
 import com.unicycle.auth.service.UserService;
 import com.unicycle.exception.ExpiredVerificationException;
 
+import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -37,7 +38,9 @@ public class AuthenticationController {
     private static final int ACCESS_TOKEN_EXPIRY_MINUTES = 15;
 
     @PostMapping("/signup")
-    public ResponseEntity<RegisterUserResponse> register(@RequestBody RegisterUserDto registerUserDto) {
+    public ResponseEntity<RegisterUserResponse> register(
+        @RequestBody RegisterUserDto registerUserDto
+    ) throws MessagingException {
         return ResponseEntity.ok(authenticationService.signup(registerUserDto));
     }
 
@@ -117,7 +120,9 @@ public class AuthenticationController {
     // }
 
     @PostMapping("/resend")
-    public ResponseEntity<?> resendVerificationCode(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> resendVerificationCode(
+        @RequestBody Map<String, String> body
+    ) throws MessagingException {
         authenticationService.resendVerificationCode(body.get("email"));
         return ResponseEntity.ok("Verification code sent.");
     }

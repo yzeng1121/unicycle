@@ -10,21 +10,17 @@ import jakarta.mail.internet.MimeMessage;
 
 @Service
 public class EmailService {
-    @Autowired // (from EmailConfiguration.java)
+    @Autowired
     private JavaMailSender emailSender;
 
     public void sendVerificationEmail(String to, String subject, String text) 
         throws MessagingException 
     {
         MimeMessage message = emailSender.createMimeMessage();
-
-        // "true" allows for message to have multiple parts (attachments)
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
         helper.setTo(to);
         helper.setSubject(subject);
-
-        // true sets contents as written in HTML (nice design)
         helper.setText(text, true);
 
         emailSender.send(message);

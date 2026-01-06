@@ -19,7 +19,7 @@ public class UserRepositoryTest {
     private TestEntityManager entityManager;
 
     @Autowired
-    private UserRepository underTest;
+    private UserRepository undertest;
 
     private UUID realUUID;
     private static final UUID fakeUUID = UUID.fromString("fbb712e7-02a2-4aa0-a94a-7f2ad874c7aa");
@@ -44,22 +44,23 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void findByUserIdTestSuccess() {
-        Optional<User> user = underTest.findByUserId(realUUID);
+    void findByUserId_success() {
+        Optional<User> user = undertest.findByUserId(realUUID);
         assertTrue(user.isPresent());
         assertEquals(realUUID, user.get().getUserId());
     }
 
     @Test
-    void findByUserIdTestFail() {
-        Optional<User> user = underTest.findByUserId(fakeUUID);
+    void findByUserId_invalidUserId_fail() {
+        Optional<User> user = undertest.findByUserId(fakeUUID);
         assertFalse(user.isPresent());
     }
 
     @Test
-    void getUserBasicDtoByUserIdTestSuccess() {
-        UserBasicDto dto = underTest.getUserBasicDtoByUserId(realUUID);
+    void getUserBasicDtoByUserIdTest_success() {
+        UserBasicDto dto = undertest.getUserBasicDtoByUserId(realUUID);
         assertNotNull(dto);
+        assertEquals(realUUID, dto.getUserId());
         assertEquals("jdoe", dto.getUsername());
         assertEquals("John", dto.getFirstName());
         assertEquals("Doe", dto.getLastName());
@@ -67,21 +68,21 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void getUserBasicDtoByUserIdTestFail() {
-        UserBasicDto dto = underTest.getUserBasicDtoByUserId(fakeUUID);
+    void getUserBasicDtoByUserIdTest_invalidUserId_fail() {
+        UserBasicDto dto = undertest.getUserBasicDtoByUserId(fakeUUID);
         assertNull(dto);
     }
 
     @Test
-    void getUsernameByUserIdTestSuccess() {
-        String username = underTest.getUsernameByUserId(realUUID);
+    void getUsernameByUserIdTest_success() {
+        String username = undertest.getUsernameByUserId(realUUID);
         assertNotNull(username);
         assertEquals("jdoe", username);
     }
 
     @Test
-    void getUsernameByUserIdTestFail() {
-        String username = underTest.getUsernameByUserId(fakeUUID);
+    void getUsernameByUserIdTest_invalidUserId_fail() {
+        String username = undertest.getUsernameByUserId(fakeUUID);
         assertNull(username);
     }
 }

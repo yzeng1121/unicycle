@@ -1,7 +1,6 @@
 package com.unicycle.auth.service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -44,7 +43,7 @@ public class AuthenticationService {
     private static final int ACCESS_TOKEN_EXPIRY_MINUTES = 15;
 
     @Transactional
-    public RegisterUserResponse signup(RegisterUserDto input) {
+    public RegisterUserResponse signup(RegisterUserDto input) throws MessagingException {
         if (userRepository.existsByUsername(input.getUsername())) {
             throw new UsernameAlreadyExistsException("Username already exists.");
         }
@@ -59,14 +58,15 @@ public class AuthenticationService {
             .username(input.getUsername())
             .email(input.getEmail())
             .password(passwordEncoder.encode(input.getPassword()))
-            .build(); 
+            .build();
         setNewVerificationCode(user);
         user.setEnabled(false);
-        
+
         sendVerificationEmail(user);
-        userRepository.save(user);
+        user = userRepository.save(user);
 
         UserBasicDto dto = UserBasicDto.builder()
+            .userId(user.getUserId())
             .username(user.getUsername())
             .firstName(user.getFirstName())
             .lastName(user.getLastName())
@@ -112,7 +112,7 @@ public class AuthenticationService {
         }
     }
 
-    public void resendVerificationCode(String email) {
+    public void resendVerificationCode(String email) throws MessagingException {
         User user = getUserByEmailOrThrow(email);
         if (user.isEnabled()) {
             throw new UserAlreadyVerifiedException("Account is already verified.");
@@ -123,7 +123,7 @@ public class AuthenticationService {
     }
 
     // TODO customize message and UI below
-    public void sendVerificationEmail(User user) {
+    public void sendVerificationEmail(User user) throws MessagingException {
         String subject = "Account Verification";
         String verificationCode = user.getVerificationCode();
         String htmlMessage = "<html>"
@@ -142,7 +142,7 @@ public class AuthenticationService {
             emailService.sendVerificationEmail(user.getEmail(), subject, htmlMessage);
         } catch (MessagingException e) {
             // TODO: for my own program figure out a better way to troubleshoot
-            e.printStackTrace();
+            throw new MessagingException("Failed to send verification code to user email.");
         }
     }
 
