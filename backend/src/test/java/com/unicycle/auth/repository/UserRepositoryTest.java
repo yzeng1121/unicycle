@@ -6,14 +6,24 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.TestPropertySource;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.unicycle.auth.entity.User;
 import com.unicycle.profile.dto.UserBasicDto;
 
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@TestPropertySource(properties = {
+    "spring.datasource.url=jdbc:h2:mem:testdb",
+    "spring.jpa.hibernate.ddl-auto=create-drop",
+    "spring.mail.host=localhost",
+    "security.jwt.secret-key=testkey1234567890123456789012345678901234567890"
+})
 public class UserRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
@@ -42,7 +52,7 @@ public class UserRepositoryTest {
         // Get the generated UUID
         realUUID = testUser.getUserId();
     }
-
+ 
     @Test
     void findByUserId_success() {
         Optional<User> user = undertest.findByUserId(realUUID);

@@ -56,21 +56,15 @@ public class User implements UserDetails {
     @Column(name = "verification_expiration")
     private LocalDateTime verificationCodeExpiresAt;
 
-    // Returns the actual username field (not email)
-    public String getRealUsername() {
-        return this.username;
-    }
+    // public String getRealUsername() {
+    //     return this.username;
+    // }
 
-    // UserDetails interface requires this to return the authentication principal
-    // For authentication, we use email as the username
+    // TODO: check if can change to improve clarity
     @JsonIgnore
     @Override
     public String getUsername() {
         return this.username; // return email for authentication
-    }
-
-    public UUID getUserId() {
-        return this.userId;
     }
     
     // overriding method to meet the requirements of the user detail interface

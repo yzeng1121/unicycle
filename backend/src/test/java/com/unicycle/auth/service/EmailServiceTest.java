@@ -1,9 +1,12 @@
 package com.unicycle.auth.service;
 
+import com.unicycle.exception.InvalidEmailException;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,6 +21,7 @@ import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.MimeMessage;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("EmailService Tests")
 public class EmailServiceTest {
     @Mock
     private JavaMailSender mockEmailSender;
@@ -61,11 +65,11 @@ public class EmailServiceTest {
     }
 
     @Test
-    void sendVerificationEmail_mailSendException_throwsException() throws MessagingException {
+    void sendVerificationEmail_mailSenderException_throwsException() throws MessagingException {
         MimeMessage mockMessage = new MimeMessage((Session) null);
 
         when(mockEmailSender.createMimeMessage()).thenReturn(mockMessage);
-        doThrow(new MailSendException("Failed to send email"))
+        doThrow(new MailSendException("Failed to send email."))
             .when(mockEmailSender).send(any(MimeMessage.class));
 
         assertThrows(MailSendException.class, () -> {
@@ -78,15 +82,10 @@ public class EmailServiceTest {
 
     @Test
     void sendVerificationEmail_nullEmail_throwsException() throws MessagingException {
-        MimeMessage mockMessage = new MimeMessage((Session) null);
-
-        when(mockEmailSender.createMimeMessage()).thenReturn(mockMessage);
-
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(InvalidEmailException.class, () -> {
             emailService.sendVerificationEmail(null, TEST_SUBJECT, TEST_TEXT);
         });
-
-        verify(mockEmailSender, times(1)).createMimeMessage();
+        verify(mockEmailSender, times(0)).createMimeMessage();
     }
 
     @Test
@@ -104,29 +103,19 @@ public class EmailServiceTest {
 
     @Test
     void sendVerificationEmail_invalidEmail_doesNotThrow() throws MessagingException {
-        MimeMessage mockMessage = new MimeMessage((Session) null);
-
-        when(mockEmailSender.createMimeMessage()).thenReturn(mockMessage);
-        doNothing().when(mockEmailSender).send(any(MimeMessage.class));
-
-        // Jakarta Mail accepts simple strings as local addresses
-        assertDoesNotThrow(() -> {
+        assertThrows(InvalidEmailException.class, () -> {
             emailService.sendVerificationEmail("invalid-email", TEST_SUBJECT, TEST_TEXT);
         });
-
-        verify(mockEmailSender, times(1)).createMimeMessage();
-        verify(mockEmailSender, times(1)).send(any(MimeMessage.class));
+        verify(mockEmailSender, times(0)).createMimeMessage();
     }
 
     @Test
     void sendVerificationEmail_multipleRecipients_throwsException() throws MessagingException {
-        MimeMessage mockMessage = new MimeMessage((Session) null);
         String multipleEmails = "john.doe@tufts.edu,jane.smith@tufts.edu";
-        when(mockEmailSender.createMimeMessage()).thenReturn(mockMessage);
-        assertThrows(AddressException.class, () -> {
+        assertThrows(InvalidEmailException.class, () -> {
             emailService.sendVerificationEmail(multipleEmails, TEST_SUBJECT, TEST_TEXT);
         });
-        verify(mockEmailSender, times(1)).createMimeMessage();
+        verify(mockEmailSender, times(0)).createMimeMessage();
     }
 
     @Test

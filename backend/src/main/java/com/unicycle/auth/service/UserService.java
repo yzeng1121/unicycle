@@ -67,7 +67,7 @@ public class UserService {
         CurrentUserDto userDto = CurrentUserDto.builder()
             .userId(currentUser.getUserId())
             .email(currentUser.getEmail())
-            .username(currentUser.getRealUsername())
+            .username(currentUser.getUsername())
             .firstName(currentUser.getFirstName())
             .lastName(currentUser.getLastName())
             .build();

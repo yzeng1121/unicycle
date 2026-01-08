@@ -17,13 +17,13 @@ public interface UserProfilesRepository extends JpaRepository<Profile, UUID> {
     // TODO: add querying methods here (if not too complicated may just be able to extend from CRUD repo)
     // fetch user profile data from user_profiles table in DB
     @Query("SELECT p.profileId, p.profileImage, p.listings, p.savedListings, p.purchased, p.followers, p.following, p.rating, p.followerCount, p.followingCount FROM Profile p WHERE p.userId = :userId")
-    UserProfileDto getUserProfileDtoByUserId(@Param("id") UUID userId);
+    UserProfileDto getUserProfileDtoByUserId(@Param("userId") UUID userId);
 
     @Query("SELECT p.profileId, p.userId, p.profileImage, p.listings, p.savedListings, p.purchased, p.followers, p.following, p.rating, p.followerCount, p.followingCount FROM Profile p WHERE p.userId = :userId")
-    MyProfileDto getMyProfileDtoByUserId(@Param("id") UUID userId);
+    MyProfileDto getMyProfileDtoByUserId(@Param("userId") UUID userId);
 
-    @Query("SELECT p.profileImage FROM Profile p WHERE p.profileId = :id")
-    String getS3URLInUserProfilesTableByProfileId(@Param("id") UUID id);
+    @Query("SELECT p.profileImage FROM Profile p WHERE p.profileId = :profileId")
+    String getS3URLInUserProfilesTableByProfileId(@Param("profileId") UUID profileId);
 
     @Modifying
     @Query("UPDATE Profile p SET p.profileImage = :newUrl WHERE p.profileId = :profileId")

@@ -11,5 +11,6 @@
             "database": "unicycle",
             "username": "yuxin"
         }
-    ]
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

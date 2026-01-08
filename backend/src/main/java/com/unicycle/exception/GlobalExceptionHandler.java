@@ -79,6 +79,24 @@ public class GlobalExceptionHandler {
             .body(Map.of("message", e.getMessage()));
     }
 
+    @ExceptionHandler(InvalidEmailException.class)
+    public ResponseEntity<?> handleInvalidEmailException(InvalidEmailException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Map.of("message", e.getMessage()));
+    }
+
+    @ExceptionHandler(FailedToFetchUsernameException.class)
+    public ResponseEntity<?> handleFailedToFetchUsernameException(FailedToFetchUsernameException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(Map.of("message", e.getMessage()));
+    }
+
+    @ExceptionHandler(FailedToFetchUserIdException.class)
+    public ResponseEntity<?> handleFailedToFetchUserIdException(FailedToFetchUserIdException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(Map.of("message", e.getMessage()));
+    }
+
     // Image Uploading Exceptions 
 
     @ExceptionHandler(ImageUploadingException.class)

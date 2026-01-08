@@ -49,7 +49,7 @@ const RegisterPage = () => {
   // validate username
   const isValidUsername = (username: string) => {
     const usernameRegex = /^[a-zA-Z0-9_.]+$/;
-    return usernameRegex.test(username) && username.length >= 5;
+    return usernameRegex.test(username) && username.length >= 4 && username.length <= 16;
   };
 
   // password strength validation

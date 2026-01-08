@@ -1,5 +1,11 @@
 package com.unicycle.auth.service;
 
+import com.unicycle.exception.InvalidEmailException;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.Validator;
+import jakarta.validation.Validation;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -16,6 +22,8 @@ public class EmailService {
     public void sendVerificationEmail(String to, String subject, String text) 
         throws MessagingException 
     {
+        if (!isValidEmail(to)) throw new InvalidEmailException("Invalid email format.");
+
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
@@ -24,5 +32,16 @@ public class EmailService {
         helper.setText(text, true);
 
         emailSender.send(message);
+    }
+
+    private boolean isValidEmail(String email) {
+        if (email == null) return false;
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        return validator.validateValue(EmailHolder.class, "email", email).isEmpty();
+    }
+
+    private static class EmailHolder {
+        @Email
+        private String email;
     }
 }

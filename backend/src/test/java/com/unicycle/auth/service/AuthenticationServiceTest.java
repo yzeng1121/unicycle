@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.Optional;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -37,6 +38,7 @@ import com.unicycle.profile.service.ProfileService;
 
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("AuthenticationService Tests")
 public class AuthenticationServiceTest {
     @Mock
     private UserRepository mockUserRepository;
@@ -253,4 +255,6 @@ public class AuthenticationServiceTest {
             authenticationService.sendVerificationEmail(mockUser);
         });
     }
+
+    // TODO: test the three private methods in the service class
 }

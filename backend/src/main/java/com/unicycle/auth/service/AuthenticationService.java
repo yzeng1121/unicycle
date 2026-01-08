@@ -51,6 +51,8 @@ public class AuthenticationService {
             throw new EmailAlreadyExistsException("Email already exists.");
         }
 
+        // TODO: invalid names, usernames, dorms, etc.
+
         User user = User.builder()
             .firstName(input.getFirstName())
             .lastName(input.getLastName())
