@@ -97,6 +97,12 @@ public class GlobalExceptionHandler {
             .body(Map.of("message", e.getMessage()));
     }
 
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    public ResponseEntity<?> handleInvalidRefreshTokenException(InvalidRefreshTokenException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body(Map.of("message", e.getMessage()));
+    }
+
     // Image Uploading Exceptions 
 
     @ExceptionHandler(ImageUploadingException.class)

@@ -10,7 +10,6 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-// TODO: ideally i would want refresh token to store user_id over user email
 @Entity
 @Getter
 @Setter
