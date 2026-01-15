@@ -13,6 +13,8 @@ import com.unicycle.auth.dto.CurrentUserDto;
 import com.unicycle.auth.entity.User;
 import com.unicycle.auth.repository.UserRepository;
 import com.unicycle.exception.UserNotFoundException;
+import com.unicycle.exception.FailedToFetchUsernameException;
+import com.unicycle.exception.InvalidCredentialsException;
 import com.unicycle.profile.service.ProfileService;
 
 import lombok.AllArgsConstructor;
@@ -26,6 +28,7 @@ import com.unicycle.profile.dto.UserProfileDto;
 public class UserService {
     private final UserRepository userRepository;
     private final ProfileService profileService;
+    private final EmailService emailService;
 
     // TODO: again consider removing this for all users to access, maybe keep
     // if admin would care to use this function
@@ -35,9 +38,18 @@ public class UserService {
         return users;
     }
 
+    // assumes that user can be found
+    // TODO: still iffy abt the errors thrown
     public String findUsername(UUID userId) {
+        if (userId == null) throw new InvalidCredentialsException("User id is null.");
+
         String result = userRepository.getUsernameByUserId(userId);
-        if (result == null || result.isEmpty()) {
+        
+        if (result == null) {
+            throw new FailedToFetchUsernameException("Failed to fetch username from user id.");
+        }
+        result = result.replaceAll("\\s+", "");
+        if (result.isEmpty() || result.length() == 0) {
             throw new UsernameNotFoundException("Username not found.");
         }
         return result;
@@ -49,7 +61,11 @@ public class UserService {
     }
 
     public User findByEmail(String userEmail) {
-        return userRepository.findByEmail(userEmail)
+        if (!emailService.isValidEmail(userEmail)) {
+            throw new InvalidCredentialsException("User email is invalid.");
+        } 
+
+        return userRepository.findByEmail(userEmail.toLowerCase().replaceAll("\\s+", ""))
             .orElseThrow(() -> new UserNotFoundException("User not found with email: " + userEmail));
     }
 

@@ -34,10 +34,16 @@ public class EmailService {
         emailSender.send(message);
     }
 
-    private boolean isValidEmail(String email) {
-        if (email == null) return false;
+    public boolean isValidEmail(String email) {
+        if (email == null || email.length() == 0) return false;
+        email = email.replaceAll("\\s+", "");
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        return validator.validateValue(EmailHolder.class, "email", email).isEmpty();
+        return validator.validateValue(
+                EmailHolder.class, 
+                "email", 
+                email)
+            .isEmpty() && 
+            email.toLowerCase().endsWith("@tufts.edu");
     }
 
     private static class EmailHolder {

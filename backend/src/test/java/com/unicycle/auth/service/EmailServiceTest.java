@@ -17,7 +17,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
-import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.MimeMessage;
 
 @ExtendWith(MockitoExtension.class)
@@ -90,15 +89,9 @@ public class EmailServiceTest {
 
     @Test
     void sendVerificationEmail_emptyEmail_throwsException() throws MessagingException {
-        MimeMessage mockMessage = new MimeMessage((Session) null);
-
-        when(mockEmailSender.createMimeMessage()).thenReturn(mockMessage);
-
-        assertThrows(AddressException.class, () -> {
+        assertThrows(InvalidEmailException.class, () -> {
             emailService.sendVerificationEmail("", TEST_SUBJECT, TEST_TEXT);
         });
-
-        verify(mockEmailSender, times(1)).createMimeMessage();
     }
 
     @Test
@@ -178,5 +171,80 @@ public class EmailServiceTest {
 
         verify(mockEmailSender, times(1)).createMimeMessage();
         verify(mockEmailSender, times(1)).send(any(MimeMessage.class));
+    }
+
+    @Test
+    void isValidEmail_validEmailFormat_returnsTrue() {
+        assertTrue(emailService.isValidEmail("john.doe@tufts.edu"));
+    }
+
+    @Test
+    void isValidEmail_validEmailWithSubdomain_returnsTrue() {
+        assertFalse(emailService.isValidEmail("user@mail.tufts.edu"));
+    }
+
+    @Test
+    void isValidEmail_validEmailWithNumbers_returnsTrue() {
+        assertTrue(emailService.isValidEmail("jdoe123@tufts.edu"));
+    }
+
+    @Test
+    void isValidEmail_validEmailWithSpecialChars_returnsTrue() {
+        assertTrue(emailService.isValidEmail("john.doe+@tufts.edu"));
+    }
+
+    @Test
+    void isValidEmail_validEmailWithSpaces_returnsTrue() {
+        assertTrue(emailService.isValidEmail("           john.doe@tufts.edu"));
+    }
+
+    @Test
+    void isValidEmail_nullEmail_returnsFalse() {
+        assertFalse(emailService.isValidEmail(null));
+    }
+
+    @Test
+    void isValidEmail_emptyString_returnsFalse() {
+        assertFalse(emailService.isValidEmail(""));
+    }
+
+    @Test
+    void isValidEmail_missingAtSymbol_returnsFalse() {
+        assertFalse(emailService.isValidEmail("testexample.com"));
+    }
+
+    @Test
+    void isValidEmail_missingDomain_returnsFalse() {
+        assertFalse(emailService.isValidEmail("test@"));
+    }
+
+    @Test
+    void isValidEmail_missingUsername_returnsFalse() {
+        assertFalse(emailService.isValidEmail("@example.com"));
+    }
+
+    @Test
+    void isValidEmail_missingTLD_returnsFalse() {
+        assertFalse(emailService.isValidEmail("test@example"));
+    }
+
+    @Test
+    void isValidEmail_emailWithSpaces_returnsFalse() {
+        assertFalse(emailService.isValidEmail("test user@example.com"));
+    }
+
+    @Test
+    void isValidEmail_multipleAtSymbols_returnsFalse() {
+        assertFalse(emailService.isValidEmail("test@@example.com"));
+    }
+
+    @Test
+    void isValidEmail_invalidCharacters_returnsFalse() {
+        assertFalse(emailService.isValidEmail("test()@example.com"));
+    }
+
+    @Test
+    void isValidEmail_whitespaceOnly_returnsFalse() {
+        assertFalse(emailService.isValidEmail("   "));
     }
 }

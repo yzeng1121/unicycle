@@ -53,13 +53,13 @@ class RefreshTokenServiceTest {
         mockUser = mock(User.class);
 
         mockRefreshToken = RefreshToken.builder()
-                .id(mockRefreshTokenId)
-                .userId(mockUserId)
-                .token(mockTokenValue)
-                .isActive(true)
-                .expiresAt(LocalDateTime.now().plusDays(30))
-                .createdAt(LocalDateTime.now())
-                .build();
+            .id(mockRefreshTokenId)
+            .userId(mockUserId)
+            .token(mockTokenValue)
+            .isActive(true)
+            .expiresAt(LocalDateTime.now().plusDays(30))
+            .createdAt(LocalDateTime.now())
+            .build();
     }
 
     @Nested
