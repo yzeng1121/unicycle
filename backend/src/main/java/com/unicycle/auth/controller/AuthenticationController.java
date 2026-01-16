@@ -18,6 +18,8 @@ import com.unicycle.auth.service.JwtService;
 import com.unicycle.auth.service.RefreshTokenService;
 import com.unicycle.auth.service.UserService;
 import com.unicycle.exception.ExpiredVerificationException;
+import com.unicycle.exception.InvalidCredentialsException;
+import com.unicycle.exception.FailedToExtractUserIdException;
 
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
@@ -81,9 +83,7 @@ public class AuthenticationController {
             // TODO: error here because tries to find user by email but actually gives username
             return ResponseEntity.ok(buildAccessTokenResponse(userId));
         } catch (Exception e) {
-            return ResponseEntity.status(401).body(
-                Map.of("message", "Token refresh failed")
-            );
+            throw new FailedToExtractUserIdException("Failed to extract user id from token: " + e.getMessage());
         }
     }
 
@@ -123,6 +123,7 @@ public class AuthenticationController {
     public ResponseEntity<?> resendVerificationCode(
         @RequestBody Map<String, String> body
     ) throws MessagingException {
+        if (body.isEmpty()) throw new InvalidCredentialsException("Please provide proper email to resend.");
         authenticationService.resendVerificationCode(body.get("email"));
         return ResponseEntity.ok("Verification code sent.");
     }

@@ -103,6 +103,12 @@ public class GlobalExceptionHandler {
             .body(Map.of("message", e.getMessage()));
     }
 
+    @ExceptionHandler(FailedToExtractUserIdException.class)
+    public ResponseEntity<?> handleFailedToExtractUserIdException(FailedToExtractUserIdException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(Map.of("message", e.getMessage()));
+    }
+
     // Image Uploading Exceptions 
 
     @ExceptionHandler(ImageUploadingException.class)
