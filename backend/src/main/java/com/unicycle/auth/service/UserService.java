@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.unicycle.auth.dto.CurrentUserDto;
@@ -29,6 +32,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final ProfileService profileService;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
     // TODO: again consider removing this for all users to access, maybe keep
     // if admin would care to use this function
@@ -103,6 +107,13 @@ public class UserService {
             .profileImageUrl(userProfileDto.getProfileImage())
             .build();
         return headerProfile;
+    }
+
+    public void changePassword(UUID userId, String password) {
+        String encodedPassword = passwordEncoder.encode(password);
+        int updated = userRepository.changePassword(userId, encodedPassword);
+        if (updated == 0) throw new UserNotFoundException("User not found");
+        userRepository.changePassword(userId, encodedPassword);
     }
 }
 

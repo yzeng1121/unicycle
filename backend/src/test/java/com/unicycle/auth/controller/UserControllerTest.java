@@ -77,9 +77,8 @@ public class UserControllerTest {
             .build();
     }
 
-    // ==================== /users/me ENDPOINT TESTS ====================
     @Nested
-    @DisplayName("/users/me Endpoint Tests")
+    @DisplayName("/users/me Tests")
     class AuthenticatedUserTests {
 
         @Test
@@ -179,9 +178,8 @@ public class UserControllerTest {
         }
     }
 
-    // ==================== /users/ ENDPOINT TESTS (ADMIN ONLY) ====================
     @Nested
-    @DisplayName("/users/ Endpoint Tests (Admin Only)")
+    @DisplayName("/users/ Tests (Admin Only)")
     class AllUsersTests {
 
         @Test
@@ -267,9 +265,8 @@ public class UserControllerTest {
         }
     }
 
-    // ==================== /users/{userId}/get-header ENDPOINT TESTS ====================
     @Nested
-    @DisplayName("/users/{userId}/get-header Endpoint Tests")
+    @DisplayName("/users/{userId}/get-header Tests")
     class GetUserHeaderTests {
 
         @Test
@@ -346,36 +343,40 @@ public class UserControllerTest {
         }
 
         @Test
-        void getUserHeader_nonExistentUserId_throwsUserNotFoundException() {
+        void getUserHeader_nonExistentUserId_throwsException() {
             UUID nonExistentId = UUID.randomUUID();
             when(userService.getHeaderProfileDto(nonExistentId))
                 .thenThrow(new UserNotFoundException("User not found with id: " + nonExistentId));
 
-            assertThrows(UserNotFoundException.class, () -> userController.getUserHeader(nonExistentId));
+            assertThrows(UserNotFoundException.class, 
+                () -> userController.getUserHeader(nonExistentId));
         }
 
         @Test
-        void getUserHeader_userDeletedOrDeactivated_throwsUserNotFoundException() {
+        void getUserHeader_userDeletedOrDeactivated_throwsException() {
             when(userService.getHeaderProfileDto(testUserId))
                 .thenThrow(new UserNotFoundException("User not found"));
 
-            assertThrows(UserNotFoundException.class, () -> userController.getUserHeader(testUserId));
+            assertThrows(UserNotFoundException.class, 
+                () -> userController.getUserHeader(testUserId));
         }
 
         @Test
-        void getUserHeader_profileNotFound_throwsProfileNotFoundException() {
+        void getUserHeader_profileNotFound_throwsException() {
             when(userService.getHeaderProfileDto(testUserId))
                 .thenThrow(new ProfileNotFoundException("Profile not found with userId: " + testUserId));
 
-            assertThrows(ProfileNotFoundException.class, () -> userController.getUserHeader(testUserId));
+            assertThrows(ProfileNotFoundException.class, 
+                () -> userController.getUserHeader(testUserId));
         }
 
         @Test
-        void getUserHeader_nullUserId_throwsUserNotFoundException() {
+        void getUserHeader_nullUserId_throwsException() {
             when(userService.getHeaderProfileDto(null))
                 .thenThrow(new UserNotFoundException("User not found with id: null"));
 
-            assertThrows(UserNotFoundException.class, () -> userController.getUserHeader(null));
+            assertThrows(UserNotFoundException.class, 
+                () -> userController.getUserHeader(null));
         }
 
         @Test
@@ -396,7 +397,7 @@ public class UserControllerTest {
         }
 
         @Test
-        void getUserHeader_databaseConnectionFailure_throwsDataAccessException() {
+        void getUserHeader_databaseConnectionFailure_throwsException() {
             when(userService.getHeaderProfileDto(testUserId))
                 .thenThrow(new DataAccessResourceFailureException("Connection failed"));
 
@@ -419,9 +420,8 @@ public class UserControllerTest {
         }
     }
 
-    // ==================== /users/{userId}/get-username ENDPOINT TESTS ====================
     @Nested
-    @DisplayName("/users/{userId}/get-username Endpoint Tests")
+    @DisplayName("/users/{userId}/get-username Tests")
     class GetUsernameTests {
 
         @Test
@@ -469,7 +469,7 @@ public class UserControllerTest {
         }
 
         @Test
-        void getUsername_nonExistentUserId_throwsFailedToFetchUsernameException() {
+        void getUsername_nonExistentUserId_throwsException() {
             UUID nonExistentId = UUID.randomUUID();
             when(userService.findUsername(nonExistentId))
                 .thenThrow(new FailedToFetchUsernameException("Failed to fetch username from user id."));
@@ -479,7 +479,7 @@ public class UserControllerTest {
         }
 
         @Test
-        void getUsername_deletedUser_throwsFailedToFetchUsernameException() {
+        void getUsername_deletedUser_throwsException() {
             when(userService.findUsername(testUserId))
                 .thenThrow(new FailedToFetchUsernameException("Failed to fetch username from user id."));
 
@@ -488,7 +488,7 @@ public class UserControllerTest {
         }
 
         @Test
-        void getUsername_deactivatedUser_throwsFailedToFetchUsernameException() {
+        void getUsername_deactivatedUser_throwsException() {
             when(userService.findUsername(testUserId))
                 .thenThrow(new FailedToFetchUsernameException("Failed to fetch username from user id."));
 
@@ -497,7 +497,7 @@ public class UserControllerTest {
         }
 
         @Test
-        void getUsername_nullUserId_throwsInvalidCredentialsException() {
+        void getUsername_nullUserId_throwsException() {
             when(userService.findUsername(null))
                 .thenThrow(new InvalidCredentialsException("User id is null."));
 
@@ -506,7 +506,7 @@ public class UserControllerTest {
         }
 
         @Test
-        void getUsername_userWithNullUsername_throwsFailedToFetchUsernameException() {
+        void getUsername_userWithNullUsername_throwsException() {
             when(userService.findUsername(testUserId))
                 .thenThrow(new FailedToFetchUsernameException("Failed to fetch username from user id."));
 
@@ -515,7 +515,7 @@ public class UserControllerTest {
         }
 
         @Test
-        void getUsername_userWithEmptyUsername_throwsFailedToFetchUsernameException() {
+        void getUsername_userWithEmptyUsername_throwsException() {
             when(userService.findUsername(testUserId))
                 .thenThrow(new FailedToFetchUsernameException("Failed to fetch username from user id."));
 
@@ -524,7 +524,7 @@ public class UserControllerTest {
         }
 
         @Test
-        void getUsername_databaseConnectionFailure_throwsDataAccessException() {
+        void getUsername_databaseConnectionFailure_throwsException() {
             when(userService.findUsername(testUserId))
                 .thenThrow(new DataAccessResourceFailureException("Connection failed"));
 
@@ -558,7 +558,6 @@ public class UserControllerTest {
         }
     }
 
-    // ==================== CROSS-CUTTING EDGE CASE TESTS ====================
     @Nested
     @DisplayName("Cross-Cutting Edge Case Tests")
     class CrossCuttingTests {

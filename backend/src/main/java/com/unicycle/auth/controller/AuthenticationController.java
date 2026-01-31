@@ -130,10 +130,17 @@ public class AuthenticationController {
 
     // TODO: reset password 
     // TODO: frontend implementation/email HTML file
-    // @PostMapping("/reset-password")
-    // public ResponseEntity<?> resetPassword() {
+    // TODO: implement testing for this in AuthenticationControllerTests
+    // TODO: for now... a user must KNOW their old password to reset their old
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody LoginUserDto loginUserDto) {
+        User user = userService.findByEmail(loginUserDto.getEmail());
+        UUID userId = user.getUserId();
+        String password = loginUserDto.getPassword();
 
-    // }
+        userService.changePassword(userId, password);
+        return ResponseEntity.ok("Password has been reset.");
+    }
 
     // TODO: forgot password
     
