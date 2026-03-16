@@ -91,6 +91,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // TODO: lsot error context
             System.out.println("JWT Filter Exception: " + exception.getClass().getSimpleName() + " - " + exception.getMessage());
             SecurityContextHolder.clearContext();
+            // response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            // TODO: the client gets a blank response instead of a clean 401.
+            // TODO: consider an explicit response to the client
             return;
         }
         filterChain.doFilter(request, response);

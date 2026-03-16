@@ -32,7 +32,7 @@ public class RefreshToken {
     private LocalDateTime createdAt = LocalDateTime.now();
     @Builder.Default
     @Column(name = "is_active")
-    private Boolean isActive = true;
+    private boolean isActive = true;
     
     public boolean isExpired() {
         return LocalDateTime.now().isAfter(this.expiresAt);

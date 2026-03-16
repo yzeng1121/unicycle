@@ -33,6 +33,6 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, UUID
     void deleteExpiredTokens(@Param("now") LocalDateTime now);
 
     @Modifying
-    @Query("DELETE FROM RefreshToken rt WHERE rt.userId < :userId")
+    @Query("DELETE FROM RefreshToken rt WHERE rt.userId = :userId")
     void deletePreviousTokens(@Param("userId") UUID userId);
 }
