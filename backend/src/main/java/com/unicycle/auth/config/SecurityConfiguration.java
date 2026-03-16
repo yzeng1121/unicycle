@@ -36,6 +36,7 @@ public class SecurityConfiguration {
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/api/listings/**").authenticated()
                 .requestMatchers("/profiles/**").authenticated()
+                .requestMatchers("/product/**").authenticated()
                 .requestMatchers("/error").permitAll() // TODO: remove later for handling error fetching user w/ userID
                 .anyRequest().authenticated()
             )

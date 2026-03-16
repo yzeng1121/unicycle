@@ -56,6 +56,9 @@ dependencies {
 
 	// email validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// stripe payment 
+	implementation 'com.stripe:stripe-java:29.2.0'
 }
 
 tasks.named('test') {

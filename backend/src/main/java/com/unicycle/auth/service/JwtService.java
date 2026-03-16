@@ -97,7 +97,7 @@ public class JwtService {
 
     // TODO: is this change ok for security reasons?
     private Key getSignInKey() {
-        byte[] keyBytes = java.util.Base64.getDecoder().decode(secretKey);
+        byte[] keyBytes = java.util.Base64.getUrlDecoder().decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

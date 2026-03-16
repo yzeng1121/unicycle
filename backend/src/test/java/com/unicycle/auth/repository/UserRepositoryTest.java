@@ -21,6 +21,7 @@ import com.unicycle.profile.dto.UserBasicDto;
 @TestPropertySource(properties = {
     "spring.datasource.url=jdbc:h2:mem:testdb",
     "spring.jpa.hibernate.ddl-auto=create-drop",
+    "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect",
     "spring.mail.host=localhost",
     "security.jwt.secret-key=testkey1234567890123456789012345678901234567890"
 })
