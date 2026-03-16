@@ -12,7 +12,6 @@
 /apps/mobile/ios
 /apps/mobile/android
 
-
 # misc
 .DS_Store
 desktop_icon
