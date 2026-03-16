@@ -32,7 +32,7 @@ public interface UserRepository extends CrudRepository<User, UUID> {
     String getUsernameByUserId(@Param("userId") UUID userId);
 
     // TODO: implement testing for this in UserRepositoryTests
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Transactional
     @Query("UPDATE User u SET u.password = :password WHERE u.userId = :userId")
     int changePassword(@Param("userId") UUID userId, @Param("password") String password);

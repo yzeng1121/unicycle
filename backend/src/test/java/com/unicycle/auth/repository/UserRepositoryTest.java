@@ -32,11 +32,12 @@ public class UserRepositoryTest {
     private UserRepository undertest;
 
     private UUID realUUID;
+    private User testUser;
     private static final UUID fakeUUID = UUID.fromString("fbb712e7-02a2-4aa0-a94a-7f2ad874c7aa");
 
     @BeforeEach
     void setUp() {
-        User testUser = User.builder()
+        testUser = User.builder()
                 .username("jdoe")
                 .email("john.doe@tufts.edu")
                 .password("password123")
@@ -95,4 +96,44 @@ public class UserRepositoryTest {
         String username = undertest.getUsernameByUserId(fakeUUID);
         assertNull(username);
     }
+
+    @Test
+    void changePassword_validUserAndPassword_returnsOne() {
+        int result = undertest.changePassword(testUser.getUserId(), "newEncodedPassword");
+        assertEquals(1, result);
+    }
+
+    @Test
+    void changePassword_validUser_passwordUpdatedInDb() {
+        undertest.changePassword(testUser.getUserId(), "newEncodedPassword");
+        User updated = undertest.findByUserId(testUser.getUserId()).get();
+        assertEquals("newEncodedPassword", updated.getPassword());
+    }
+
+    @Test
+    void changePassword_nonExistentUser_returnsZero() {
+        UUID fakeId = UUID.randomUUID();
+        int result = undertest.changePassword(fakeId, "newEncodedPassword");
+        assertEquals(0, result);
+    }
+
+    @Test
+    void changePassword_nullUserId_returnsZero() {
+        int result = undertest.changePassword(null, "newEncodedPassword");
+        assertEquals(0, result);
+    }
+
+    @Test
+    void changePassword_nullPassword_throwsException() {
+        assertThrows(Exception.class, () -> {
+            undertest.changePassword(testUser.getUserId(), null);
+        });
+    }
+
+    @Test
+    void changePassword_emptyPassword_returnsOne() {
+        int result = undertest.changePassword(testUser.getUserId(), "");
+        assertEquals(1, result); // succeeds at DB level, validation should be in service layer
+    }
+
 }
