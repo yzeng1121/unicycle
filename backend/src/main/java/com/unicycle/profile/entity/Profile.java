@@ -33,25 +33,21 @@ public class Profile {
     @Column(name = "profile_image") // TODO: default image
     private String profileImage; 
 
-    @Column(columnDefinition = "text[]")
     @JdbcTypeCode(SqlTypes.ARRAY)
-    private List<UUID> listings; 
+    private List<UUID> listings;
 
-    @Column(name = "saved_listings", columnDefinition = "text[]")
+    @Column(name = "saved_listings")
     @JdbcTypeCode(SqlTypes.ARRAY)
-    private List<UUID> savedListings; 
+    private List<UUID> savedListings;
 
-    @Column(columnDefinition = "text[]")
     @JdbcTypeCode(SqlTypes.ARRAY)
-    private List<UUID> purchased; 
+    private List<UUID> purchased;
 
-    @Column(columnDefinition = "text[]")
     @JdbcTypeCode(SqlTypes.ARRAY)
     private List<UUID> followers;
 
     private int followerCount;
 
-    @Column(columnDefinition = "text[]")
     @JdbcTypeCode(SqlTypes.ARRAY)
     private List<UUID> following;
     private int followingCount;
