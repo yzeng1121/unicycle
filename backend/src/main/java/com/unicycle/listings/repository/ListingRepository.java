@@ -5,8 +5,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Repository;
 
 import com.unicycle.listings.entity.Listing;
@@ -16,6 +18,11 @@ import com.unicycle.listings.dto.ListingCardDto;
 public interface ListingRepository extends JpaRepository<Listing, UUID> {
     @Query("SELECT l FROM Listing l WHERE l.itemId = :itemId")
     Optional<Listing> getListingInfo(@Param("itemId") UUID itemId);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Listing l SET l.sold = true WHERE l.itemId = :itemId")
+    void markAsSold(@Param("itemId") UUID itemId);
 
     @Query(value = "SELECT image_urls->>0 FROM listings WHERE item_id = ?1", nativeQuery = true)
     String getCoverPhoto(UUID itemId);

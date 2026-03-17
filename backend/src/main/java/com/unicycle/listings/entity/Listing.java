@@ -57,6 +57,10 @@ public class Listing {
     @Column(name = "image_urls", columnDefinition = "json")
     private List<String> imageUrls;  // List of S3 URLs
 
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean sold = false;
+
     // optional fields
     private BigDecimal price;
     @Column(name = "trade_for")

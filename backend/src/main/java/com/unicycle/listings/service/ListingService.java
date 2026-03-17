@@ -24,13 +24,15 @@ import com.unicycle.listings.repository.ListingRepository;
 import com.unicycle.profile.repository.UserProfilesRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class ListingService {
-    private ListingRepository listingRepository;
-    private UserProfilesRepository userProfilesRepository;
-    private ImageUploadService imageUploadService;
+    private final ListingRepository listingRepository;
+    private final UserProfilesRepository userProfilesRepository;
+    private final ImageUploadService imageUploadService;
 
     public ListingResponse createListing(ListingDto input) {
         try {
