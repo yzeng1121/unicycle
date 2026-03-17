@@ -54,7 +54,7 @@ export const useAuth = (): AuthContextType => {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -111,7 +111,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       if (!token || token.trim().length < 10) return false;
 
-      const response = await fetch('http://Yuxins-Mac.local:8080/users/me', {
+      const response = await fetch('http://13.221.95.208:8080/users/me', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -150,7 +150,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
 
       console.log('Attempting to refresh access token...');
-      const response = await fetch('http://Yuxins-Mac.local:8080/auth/refresh', {
+      const response = await fetch('http://13.221.95.208:8080/auth/refresh', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -271,7 +271,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const { refreshToken } = await getStoredTokens();
 
       if (refreshToken) {
-        await fetch('http://Yuxins-Mac.local:8080/auth/logout', {
+        await fetch('http://13.221.95.208:8080/auth/logout', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

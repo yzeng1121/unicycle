@@ -108,7 +108,7 @@ const Post = () => {
 
     // Single API call handles everything!
     try {
-      const response = await makeAuthenticatedRequest('http://Yuxins-Mac.local:8080/api/listings/create', {
+      const response = await makeAuthenticatedRequest('http://13.221.95.208:8080/api/listings/create', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`

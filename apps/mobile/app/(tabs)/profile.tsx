@@ -118,7 +118,7 @@ const profile = () => {
   const fetchUserProfilePicture = async (userId: string) => {
     try {
       const response = await makeAuthenticatedRequest(
-        `http://Yuxins-Mac.local:8080/users/${userId}/get-profile-image`
+        `http://13.221.95.208:8080/users/${userId}/get-profile-image`
       );
 
       if (response.ok) {
@@ -134,7 +134,7 @@ const profile = () => {
   const fetchUsername = async (userId: string) => {
     try {
       const response = await makeAuthenticatedRequest(
-        `http://Yuxins-Mac.local:8080/users/${userId}/get-username`
+        `http://13.221.95.208:8080/users/${userId}/get-username`
       );
 
       if (response.ok) {
@@ -163,7 +163,7 @@ const profile = () => {
   const fetchListingCover = async (listingId: string) => {
     try {
       const response = await makeAuthenticatedRequest(
-          `http://Yuxins-Mac.local:8080/api/listings/${listingId}/get-cover-photo`
+          `http://13.221.95.208:8080/api/listings/${listingId}/get-cover-photo`
       );
       console.log(`Listing ${listingId} response status:`, response.status);
 
@@ -188,7 +188,7 @@ const profile = () => {
         setLoading(true);
 
         const response = await makeAuthenticatedRequest(
-          'http://Yuxins-Mac.local:8080/profiles/me'
+          'http://13.221.95.208:8080/profiles/me'
         );
 
         if (response.ok) {
@@ -381,7 +381,7 @@ const profile = () => {
       console.log("Sending image to backend...")
       console.log("profileId = " + myProfile?.profileId)
       console.log("accessToken = " + accessToken)
-      const response = await fetch(`http://Yuxins-Mac.local:8080/profiles/${myProfile?.profileId}/update/profile-image`, {
+      const response = await fetch(`http://13.221.95.208:8080/profiles/${myProfile?.profileId}/update/profile-image`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${accessToken}`
@@ -404,7 +404,7 @@ const profile = () => {
   const removeExistingImage = async () => {
     try {
       console.log("Attempting to delete the existing profile image...")
-      const response = await fetch(`http://Yuxins-Mac.local:8080/profiles/${myProfile?.profileId}/delete/profile-image`, { // tufts
+      const response = await fetch(`http://13.221.95.208:8080/profiles/${myProfile?.profileId}/delete/profile-image`, { // tufts
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`

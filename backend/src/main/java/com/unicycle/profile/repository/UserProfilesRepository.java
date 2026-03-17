@@ -43,6 +43,11 @@ public interface UserProfilesRepository extends JpaRepository<Profile, UUID> {
     @Query(value = "UPDATE user_profiles SET listings = array_append(listings, :listingId) WHERE profile_id = :profileId", nativeQuery = true)
     void addListingToProfile(@Param("profileId") UUID profileId, @Param("listingId") UUID listingId);
 
+    // TODO: need to test ts
+    @Modifying
+    @Query(value = "UPDATE user_profiles SET purchased = array_append(purchased, :listingId) WHERE user_id = :userId", nativeQuery = true)
+    void addToPurchased(@Param("userId") UUID userId, @Param("listingId") UUID listingId);
+
     @Query("SELECT p.profileImage FROM Profile p WHERE p.userId = :userId")
     String getProfileImage(@Param("userId") UUID userId);
     // TODO: delete user's 

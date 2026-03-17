@@ -1,68 +1,128 @@
 package com.unicycle.payment.service;
 
-import com.unicycle.payment.dto.StripeResponse;
-import com.unicycle.payment.dto.ProductRequest;
+import java.math.BigDecimal;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
-import com.stripe.model.checkout.Session;
-import com.stripe.param.checkout.SessionCreateParams;
-import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Value;
+import com.stripe.model.PaymentIntent;
+import com.stripe.param.PaymentIntentCreateParams;
+import com.unicycle.auth.repository.UserRepository;
+import com.unicycle.auth.service.EmailService;
+import com.unicycle.listings.entity.Listing;
+import com.unicycle.listings.repository.ListingRepository;
+import com.unicycle.payment.dto.PaymentIntentResponse;
+import com.unicycle.profile.repository.UserProfilesRepository;
 
+import lombok.RequiredArgsConstructor;
+
+// TODO: customize merchant ID you register in Apple Developer if you plan to use Apple Pay
 @Service
+@RequiredArgsConstructor
 public class StripeService {
+
     @Value("${stripe.secret.key}")
     private String secretKey;
 
-    @Value("${stripe.success.url}")
-    private String successUrl;
+    private final ListingRepository listingRepository;
+    private final UserProfilesRepository userProfilesRepository;
+    private final UserRepository userRepository;
+    private final EmailService emailService;
 
-    @Value("${stripe.cancel.url}")
-    private String cancelUrl;
-
-    public StripeResponse checkoutProduct(ProductRequest productRequest) {
+    public PaymentIntentResponse createPaymentIntent(UUID listingId, UUID buyerId, String currency) {
         Stripe.apiKey = secretKey;
 
-        SessionCreateParams.LineItem.PriceData.ProductData productData =
-            SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                .setName(productRequest.getName())
-                .build();
+        Optional<Listing> listingOpt = listingRepository.getListingInfo(listingId);
+        if (listingOpt.isEmpty()) {
+            return PaymentIntentResponse.builder()
+                    .status("FAILURE")
+                    .message("Listing not found.")
+                    .build();
+        }
 
-        SessionCreateParams.LineItem.PriceData priceData =
-            SessionCreateParams.LineItem.PriceData.builder()
-                .setCurrency(productRequest.getCurrency() == null ?
-                        "USD" : productRequest.getCurrency())
-                .setUnitAmount(productRequest.getAmount())
-                .setProductData(productData)
-                .build();
+        Listing listing = listingOpt.get();
 
-        SessionCreateParams.LineItem lineItem =
-            SessionCreateParams.LineItem.builder()
-                .setQuantity(productRequest.getQuantity())
-                .setPriceData(priceData)
-                .build();
+        if (listing.isSold()) {
+            return PaymentIntentResponse.builder()
+                    .status("FAILURE")
+                    .message("This item has already been sold.")
+                    .build();
+        }
 
-        SessionCreateParams params = SessionCreateParams.builder()
-                .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl(successUrl)
-                .setCancelUrl(cancelUrl)
-                .addLineItem(lineItem)
+        if (listing.getPrice() == null) {
+            return PaymentIntentResponse.builder()
+                    .status("FAILURE")
+                    .message("Listing has no price.")
+                    .build();
+        }
+
+        long amountInCents = listing.getPrice()
+                .multiply(BigDecimal.valueOf(100))
+                .longValue();
+
+        String resolvedCurrency = (currency != null && !currency.isBlank()) ? currency : "usd";
+
+        PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
+                .setAmount(amountInCents)
+                .setCurrency(resolvedCurrency)
+                .putMetadata("listingId", listingId.toString())
+                .putMetadata("buyerId", buyerId.toString())
+                .putMetadata("sellerId", listing.getUserId().toString())
                 .build();
 
         try {
-            Session session = Session.create(params);
-            return StripeResponse.builder()
+            PaymentIntent paymentIntent = PaymentIntent.create(params);
+            return PaymentIntentResponse.builder()
                     .status("SUCCESS")
-                    .message("Payment session created")
-                    .sessionId(session.getId())
-                    .sessionUrl(session.getUrl())
+                    .message("Payment intent created.")
+                    .clientSecret(paymentIntent.getClientSecret())
+                    .paymentIntentId(paymentIntent.getId())
                     .build();
         } catch (StripeException e) {
-            return StripeResponse.builder()
+            return PaymentIntentResponse.builder()
                     .status("FAILURE")
                     .message(e.getMessage())
                     .build();
         }
+    }
+
+    @Transactional
+    public void handlePaymentIntentSucceeded(PaymentIntent paymentIntent) {
+        String listingIdStr = paymentIntent.getMetadata().get("listingId");
+        String buyerIdStr = paymentIntent.getMetadata().get("buyerId");
+        String sellerIdStr = paymentIntent.getMetadata().get("sellerId");
+
+        if (listingIdStr == null || buyerIdStr == null || sellerIdStr == null) return;
+
+        UUID listingId = UUID.fromString(listingIdStr);
+        UUID buyerId = UUID.fromString(buyerIdStr);
+        UUID sellerId = UUID.fromString(sellerIdStr);
+
+        // Mark listing as sold
+        listingRepository.markAsSold(listingId);
+
+        // Add to buyer's purchased list
+        userProfilesRepository.addToPurchased(buyerId, listingId);
+
+        // Notify seller via email
+        userRepository.findByUserId(sellerId).ifPresent(seller -> {
+            Optional<Listing> listingOpt = listingRepository.getListingInfo(listingId);
+            String title = listingOpt.map(Listing::getTitle).orElse("your item");
+            try {
+                emailService.sendNotificationEmail(
+                        seller.getEmail(),
+                        "Your item sold on UniCycle!",
+                        "<p>Great news! <strong>" + title + "</strong> has been purchased.</p>" +
+                        "<p>Arrange pickup with the buyer through the app.</p>"
+                );
+            } catch (Exception e) {
+                System.err.println("Failed to send seller notification: " + e.getMessage());
+            }
+        });
     }
 }

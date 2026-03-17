@@ -53,7 +53,7 @@ const ProductGrid = () => {
       console.log("The id of the user who's prompting a search is..." + user.userId);
       try {
         const response = await makeAuthenticatedRequest(
-          `http://Yuxins-Mac.local:8080/api/listings/search?userId=${user.userId}&query=${encodeURIComponent(newQuery)}`
+          `http://13.221.95.208:8080/api/listings/search?userId=${user.userId}&query=${encodeURIComponent(newQuery)}`
         );
 
         if (response.ok) {
@@ -74,7 +74,7 @@ const ProductGrid = () => {
       // TODO: consider removing from the URL bc security issue
       console.log("UserId is " + user.userId);
       const response = await makeAuthenticatedRequest(
-        `http://Yuxins-Mac.local:8080/api/listings/search?userId=${user.userId}&query=${encodeURIComponent(query)}`, {
+        `http://13.221.95.208:8080/api/listings/search?userId=${user.userId}&query=${encodeURIComponent(query)}`, {
 
       });
 

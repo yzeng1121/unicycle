@@ -1,4 +1,5 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { StripeProvider } from '@stripe/stripe-react-native';
 import { useFonts } from 'expo-font';
 import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -88,14 +89,16 @@ const RootLayout: React.FC = () => {
   if (!loaded) return null;
 
   return (
-    <AuthProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <AppNavigation />
-        {/* TODO: this is for testing */}
-        {/* <RedirectApp />  */}
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </AuthProvider>
+    <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY!}>
+      <AuthProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <AppNavigation />
+          {/* TODO: this is for testing */}
+          {/* <RedirectApp />  */}
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </AuthProvider>
+    </StripeProvider>
   );
 };
 

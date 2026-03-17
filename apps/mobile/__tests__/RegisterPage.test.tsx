@@ -363,7 +363,7 @@ describe('successful registration', () => {
         
         await waitFor(() => {
             expect(fetch).toHaveBeenCalledWith(
-                'http://Yuxins-Mac.local:8080/auth/signup',
+                'http://13.221.95.208:8080/auth/signup',
                 expect.objectContaining({
                     method: 'POST',
                     headers: {

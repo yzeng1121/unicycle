@@ -28,7 +28,7 @@ const verification = () => {
     }
 
     try {
-      const response = await fetch('http://Yuxins-Mac.local:8080/auth/verify', {
+      const response = await fetch('http://13.221.95.208:8080/auth/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ const verification = () => {
     setIsResending(true);
     
     try {
-      const response = await fetch('http://Yuxins-Mac.local:8080/auth/resend', {
+      const response = await fetch('http://13.221.95.208:8080/auth/resend', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

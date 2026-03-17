@@ -96,7 +96,7 @@ const RegisterPage = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://Yuxins-Mac.local:8080/auth/signup', {
+      const response = await fetch('http://13.221.95.208:8080/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
