@@ -11,6 +11,7 @@
 /apps/expo-env.d.ts
 /apps/mobile/ios
 /apps/mobile/android
+/apps/mobile/.env
 
 # misc
 .DS_Store

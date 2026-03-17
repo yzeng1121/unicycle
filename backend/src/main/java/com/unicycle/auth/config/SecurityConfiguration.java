@@ -33,9 +33,10 @@ public class SecurityConfiguration {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/auth/**").permitAll() // TODO: change to /api
                 .requestMatchers("/api/listings/**").authenticated()
                 .requestMatchers("/profiles/**").authenticated()
+                .requestMatchers("/product/webhook").permitAll()
                 .requestMatchers("/product/**").authenticated()
                 .requestMatchers("/error").permitAll() // TODO: remove later for handling error fetching user w/ userID
                 .anyRequest().authenticated()
@@ -57,7 +58,12 @@ public class SecurityConfiguration {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // WHO can access the API
-        configuration.setAllowedOrigins(List.of("exp://10.243.122.160:8081", "exp://Yuxins-Mac.local:8081", "http://localhost:8080"));
+        configuration.setAllowedOrigins(List.of(
+                "exp://10.243.122.160:8081", 
+                "exp://Yuxins-Mac.local:8081", 
+                "http://localhost:8080",
+                "http://13.221.95.208:8080"
+        ));
 
         // WHAT actions they can do
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
