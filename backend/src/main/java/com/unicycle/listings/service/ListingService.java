@@ -23,7 +23,7 @@ import com.unicycle.listings.dto.ListingPatchDto;
 import com.unicycle.listings.repository.ListingRepository;
 import com.unicycle.profile.repository.UserProfilesRepository;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 
 @Service
