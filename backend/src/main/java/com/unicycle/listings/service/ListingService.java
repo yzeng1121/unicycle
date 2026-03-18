@@ -169,6 +169,12 @@ public class ListingService {
         }
     }
 
+    private java.time.LocalDate toLocalDate(Object obj) {
+        if (obj instanceof java.time.LocalDate) return (java.time.LocalDate) obj;
+        if (obj instanceof java.sql.Date) return ((java.sql.Date) obj).toLocalDate();
+        return java.time.LocalDate.parse(obj.toString());
+    }
+
     public String getFirstImageUrl(UUID listingId) {
         try {
             return listingRepository.getCoverPhoto(listingId);
@@ -187,16 +193,16 @@ public class ListingService {
 
             for (Object[] obj : results) {
                 ListingCardDto listing = ListingCardDto.builder()
-                    .itemId((UUID) obj[0]) 
-                    .userId((UUID) obj[1])
+                    .itemId(obj[0] instanceof UUID ? (UUID) obj[0] : UUID.fromString(obj[0].toString()))
+                    .userId(obj[1] instanceof UUID ? (UUID) obj[1] : UUID.fromString(obj[1].toString()))
                     .listingType((String) obj[2])
                     .category((String) obj[3])
                     .pickUpLocation((String) obj[4])
                     .coverImage((String) obj[5])
-                    .price(obj[6] != null ? (BigDecimal) obj[6] : BigDecimal.ZERO)
+                    .price(obj[6] != null ? new BigDecimal(obj[6].toString()) : BigDecimal.ZERO)
                     .tradeFor((String) obj[7])
-                    .returnBy(obj[8] != null ? ((java.sql.Date) obj[8]).toLocalDate() : null)
-                    .pickUpBy(obj[9] != null ? ((java.sql.Date) obj[9]).toLocalDate() : null)
+                    .returnBy(obj[8] != null ? toLocalDate(obj[8]) : null)
+                    .pickUpBy(obj[9] != null ? toLocalDate(obj[9]) : null)
                     .build();
 
                 listings.add(listing);
