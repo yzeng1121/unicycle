@@ -56,7 +56,6 @@ const Post = () => {
       return;
     }
 
-    console.log('handlePostListing started...');
     const formData = new FormData();
 
     // Or with a fallback
@@ -64,9 +63,7 @@ const Post = () => {
 
     // Example usage
     if (userId) {
-      console.log('Current user ID:', userId);
     } else {
-      console.log('Invalid User Id');
       userId = "null"
     }
 
@@ -95,10 +92,7 @@ const Post = () => {
     }
 
     const validImages = images.filter(imageUri => imageUri != null && imageUri !== '');
-      console.log('📸 Valid image URIs:', validImages);
-      
       validImages.forEach((imageUri, index) => {
-        console.log(`📸 Adding image ${index}: ${imageUri}`);
         formData.append('images', {
           uri: imageUri,  // ← imageUri is already the string, not an object
           type: 'image/jpeg',
@@ -179,7 +173,6 @@ const Post = () => {
 
       if (!result.canceled && result.assets[0]) {
         const imageUri = result.assets[0].uri;
-        console.log('Image URI:', imageUri);
         // Use the image!
         // TODO: image should cover the current image box ...
         // TODO: image should be stored in temporary array before uploading to AWS S3
@@ -193,7 +186,6 @@ const Post = () => {
         });
       }
     } catch (error) {
-      console.log('Error picking image:', error);
       Alert.alert('Error', 'Something went wrong while selecting the image.');
     }
   };
@@ -217,7 +209,6 @@ const Post = () => {
 
       if (!result.canceled && result.assets[0]) {
         const imageUri = result.assets[0].uri;
-        console.log('Photo URI:', imageUri);
         // Use the image!
 
         // Update the specific box
@@ -228,7 +219,6 @@ const Post = () => {
         });
       }
     } catch (error) {
-      console.log('Error taking photo:', error);
       Alert.alert('Error', 'Something went wrong while taking the photo.');
     }
   };

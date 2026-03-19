@@ -68,16 +68,13 @@ export default function ProductScreen() {
         );
         
         if (response.ok) {
-          console.log('Item successfully fetched from database...');
           const productData: Listing = await response.json();
           
-          console.log("Fetched product data:", productData);
           setItem(productData);
 
           // TODO: double check to make sure that user id has been set before we try fetching user data
           let userId = productData.userId;
           setIsOwner(userId === user.userId);
-          console.log('userId: ' + userId);
 
           // TODO: fetch basic user info
           try {
@@ -86,9 +83,7 @@ export default function ProductScreen() {
             );
             
             if (response.ok) {
-              console.log('Item successfully fetched from database...');
               const userData: User = await response.json();
-              console.log("Fetched user data:", userData);
               setUserHeader(userData);
             }
           } catch (error) {

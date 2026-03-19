@@ -32,7 +32,6 @@ const ProductGrid = () => {
     </View>
   );
 
-  console.log("Query is now... " + query);
 
   const clearSearch = () => {
     setSearchText('')
@@ -50,7 +49,6 @@ const ProductGrid = () => {
       // TODO: is it rlly necessary to have user id embedded in URL?
       const newQuery = searchText.trim();
       
-      console.log("The id of the user who's prompting a search is..." + user.userId);
       try {
         const response = await makeAuthenticatedRequest(
           `http://13.221.95.208:8080/api/listings/search?userId=${user.userId}&query=${encodeURIComponent(newQuery)}`
@@ -72,7 +70,6 @@ const ProductGrid = () => {
       // brand, title are main keywords to search for
     try {
       // TODO: consider removing from the URL bc security issue
-      console.log("UserId is " + user.userId);
       const response = await makeAuthenticatedRequest(
         `http://13.221.95.208:8080/api/listings/search?userId=${user.userId}&query=${encodeURIComponent(query)}`, {
 
@@ -80,8 +77,6 @@ const ProductGrid = () => {
 
       if (response.ok) {
         const results = await response.json();
-        console.log("Search results: " + results);
-        console.log("Search results (as string): " + JSON.stringify(results));
 
         // ✅ Just set the listings, don't return JSX here
         setListings(results || []);

@@ -92,7 +92,6 @@ const Home = () => {
 
   const handleSearch = () => {
     const query = searchText.trim();
-      console.log("Query is " + query);
       if (!query) return;
       router.push({
         pathname: `../product/search-items`,

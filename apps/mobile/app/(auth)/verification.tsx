@@ -52,8 +52,6 @@ const verification = () => {
     } catch (error) {
       Alert.alert('Error', 'Verification failed. Please try again.');
     }
-
-    console.log({ email, verificationCode });
   };
 
   const handleResendCode = async () => {

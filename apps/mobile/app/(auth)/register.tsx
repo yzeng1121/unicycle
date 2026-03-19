@@ -306,7 +306,6 @@ const RegisterPage = () => {
           <TouchableOpacity
             style={styles.loginLink}
             onPress={() => {
-              console.log('login button pressed');
               router.push("/(auth)/login");
             }}
             disabled={isLoading}

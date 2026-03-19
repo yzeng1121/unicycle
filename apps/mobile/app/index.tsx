@@ -24,12 +24,10 @@ export default function LandingPage() {
   }
 
   const handleSignUp = () => {
-    console.log('sign up pressed');
     router.navigate('/(auth)/register');
   };
 
   const handleLogIn = () => {
-    console.log('log in pressed');
     router.navigate('/(auth)/login')
   };
 

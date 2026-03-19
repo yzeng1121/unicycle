@@ -106,7 +106,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     );
   }
 
-  // verify access token
+  // verify access token & generate new access token if expired
   const verifyTokenWithBackend = async (token: string): Promise<boolean> => {
     try {
       if (!token || token.trim().length < 10) return false;
@@ -119,37 +119,44 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
       });
 
-      if (response.ok) {
-        const userData: User = await response.json();
-        console.log('User data received:', userData);
-        setUser(userData);
-        return true;
+      if (!response.ok) {
+        const newAccessToken = await refreshAccessToken();
+        if (newAccessToken) {
+          // Verify with the NEW token and get user data
+          const retryResponse = await fetch('http://13.221.95.208:8080/users/me', {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${newAccessToken}`,
+              'Content-Type': 'application/json',
+            }
+          });
+          if (retryResponse.ok) {
+            const userData: User = await retryResponse.json();
+            setUser(userData);
+            await SecureStore.setItemAsync('accessToken', newAccessToken);
+            setAccessToken(newAccessToken);
+            return true;
+          }
+          return false;
+        }
+        return false;
       }
 
-      console.log('Token verification failed with status:', response.status);
-      const newAccessToken = await refreshAccessToken();
-
-      if (newAccessToken) {
-        await SecureStore.setItemAsync('accessToken', newAccessToken);
-        setAccessToken(newAccessToken);
-        return true;
-      }
-      return false;
+      const userData: User = await response.json();
+      setUser(userData);
+      return true;
     } catch (error) {
-      console.error('Network error during token verification:', error);
       return false;
     }
-  }
+  };
 
   const refreshAccessToken = async (): Promise<string | null> => {
     try {
       const { refreshToken } = await getStoredTokens();
       if (!refreshToken) {
-        console.log('No refresh token available');
         throw new Error('No refresh token available.');
       }
 
-      console.log('Attempting to refresh access token...');
       const response = await fetch('http://13.221.95.208:8080/auth/refresh', {
         method: 'POST',
         headers: {
@@ -158,11 +165,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         body: JSON.stringify({ refreshToken })
       });
 
-      console.log('Refresh token response status:', response.status);
-
       if (response.ok) {
         const data: AuthResponse = await response.json();
-        console.log('Refresh token response data:', data);
 
         if (data.accessToken) {
           await SecureStore.setItemAsync('accessToken', data.accessToken);

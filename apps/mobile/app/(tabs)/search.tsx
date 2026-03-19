@@ -32,7 +32,6 @@ const Search = () => {
 
   const searchForItem = async (): Promise<void> => {
     const query = searchText.trim();
-    console.log("Query is " + query);
     if (!query) return;
     router.push({
       pathname: `../product/search-items`,
