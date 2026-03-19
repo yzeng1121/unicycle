@@ -1,9 +1,9 @@
-import { View, Text, Image, TextInput, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
-import { useState } from 'react'
-import { useRouter } from "expo-router";
+import { View, Text, Image, TextInput, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { useRouter } from 'expo-router';
 
-import { data, getItemImage } from "../../sample_data/listings";
-import { requests } from "../../sample_data/asks";
+import { data, getItemImage } from '../../sample_data/listings';
+import { requests } from '../../sample_data/asks';
 
 // TODO: create more centralized Item & QuickAsk type to avoid errors
 type Item = {
@@ -19,12 +19,6 @@ type Item = {
   rate?: string;
 };
 
-type User = {
-  id: string,
-  name: string,
-  profileImage: string
-}
-
 type QuickAsk = {
   id: number;
   username: string;
@@ -34,72 +28,65 @@ type QuickAsk = {
   bgColor: string;
 };
 
+const ItemCard = React.memo(({ item, onPress }: { item: Item; onPress: () => void }) => (
+  <TouchableOpacity 
+    style={styles.itemCard}
+    onPress={onPress}
+  >
+    <View style={styles.itemContent}>
+      <Image
+        style={styles.imageContainer}
+        source={getItemImage(item, 0)}
+      />
+      {item.listingType === 'Selling' && (
+        <Text style={styles.itemPrice}>${item.price.toFixed(2)} - Selling</Text>
+      )}
+      {item.listingType === 'Giveaway' && (
+        <Text style={styles.itemPrice}>Free - Giveaway</Text>
+      )}
+      {item.listingType === 'Trading' && (
+        <Text style={styles.itemPrice}>Trading</Text>
+      )}
+      {item.listingType === 'Lending' && (
+        <Text style={styles.itemPrice}>${item.price.toFixed(2)} {item.rate}</Text>
+      )}
+    </View>
+  </TouchableOpacity>
+));
+
+const QuickAskCard = React.memo(({ ask, onPress }: { ask: QuickAsk; onPress: () => void }) => (
+  <View style={styles.quickAskCard}>
+    <View style={[styles.avatar, { backgroundColor: ask.bgColor }]}>
+      <Text style={styles.avatarText}>{ask.initials}</Text>
+    </View>
+    <View style={styles.quickAskContent}>
+      <View style={styles.quickAskHeader}>
+        <Text style={styles.quickAskName}>{ask.username}</Text>
+        <Text style={styles.quickAskTime}>{ask.time}</Text>
+      </View>
+      <Text style={styles.quickAskMessage}>{ask.message}</Text>
+      <TouchableOpacity 
+        style={styles.respondButton}
+        onPress={onPress}
+      >
+        <Text style={styles.respondButtonText}>Respond</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+));
+
 const Home = () => {
   const router = useRouter();
-
-  const ItemCard = ({ item }: { item: Item }) => (
-    <TouchableOpacity 
-      style={[styles.itemCard]}
-      onPress={() => router.push(`../product/${item.id}`)}>
-
-      <View style={styles.itemContent}>
-        <Image
-          style={styles.imageContainer}
-          source={getItemImage(item, 0)}
-        />
-        {item.listingType === 'Selling' && (
-          <Text style={styles.itemPrice}>${item.price.toFixed(2)} - Selling</Text>
-        )}
-        {item.listingType === 'Giveaway' && (
-          <Text style={styles.itemPrice}>Free - Giveaway</Text>
-        )}
-        {item.listingType === 'Trading' && (
-          <Text style={styles.itemPrice}>Trading</Text>
-        )}
-        {item.listingType === 'Lending' && (
-          <Text style={styles.itemPrice}>${item.price.toFixed(2)} {item.rate}</Text>
-        )}
-      </View>
-    </TouchableOpacity>
-  )
-
-  const QuickAskCard = ({ ask }: { ask: QuickAsk }) => (
-    <View style={styles.quickAskCard}>
-      <View style={[styles.avatar, { backgroundColor: ask.bgColor }]}>
-        <Text style={styles.avatarText}>{ask.initials}</Text>
-      </View>
-      <View style={styles.quickAskContent}>
-        <View style={styles.quickAskHeader}>
-          <Text style={styles.quickAskName}>{ask.username}</Text>
-          <Text style={styles.quickAskTime}>{ask.time}</Text>
-        </View>
-        <Text style={styles.quickAskMessage}>{ask.message}</Text>
-        <TouchableOpacity 
-          style={styles.respondButton}
-          onPress={() => router.push(`../../user/${ask.id}`)}
-        >
-          <Text style={styles.respondButtonText}>Respond</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  )
-  
-  const [searchText, setSearchText] = useState('')
-
-  const clearSearch = () => {
-    setSearchText('')
-  }
+  const [searchText, setSearchText] = useState('');
 
   const handleSearch = () => {
     const query = searchText.trim();
-      if (!query) return;
-      router.push({
-        pathname: `../product/search-items`,
-        params: {
-          query: query
-        }
-      });
-  }
+    if (!query) return;
+    router.push({
+      pathname: '../product/search-items',
+      params: { query },
+    });
+  };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
@@ -122,17 +109,17 @@ const Home = () => {
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Suggested</Text>
-          <TouchableOpacity>
-            <Text 
-              style={styles.seeAllButton}
-              onPress={() => router.push(`../product/suggested-items`)}
-            >See All</Text>
+          <TouchableOpacity onPress={() => router.push('../product/suggested-items')}>
+            <Text style={styles.seeAllButton}>See All</Text>
           </TouchableOpacity>
         </View>
-        {/* This adds test data from the Listings file into the actual screen.*/}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
           {data.slice(0, 6).map(item => (
-            <ItemCard key={item.id} item={item} />
+            <ItemCard 
+              key={item.id} 
+              item={item} 
+              onPress={() => router.push(`../product/${item.id}`)} 
+            />
           ))}
         </ScrollView>
       </View>
@@ -141,17 +128,17 @@ const Home = () => {
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Items Near You</Text>
-          <TouchableOpacity>
-            <Text 
-              style={styles.seeAllButton}
-              onPress={() => router.push(`../product/nearby-items`)}
-            >See All</Text>
+          <TouchableOpacity onPress={() => router.push('../product/nearby-items')}>
+            <Text style={styles.seeAllButton}>See All</Text>
           </TouchableOpacity>
         </View>
-        {/* This adds test data from the Listings file into the actual screen.*/}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
           {data.slice(0, 6).map(item => (
-            <ItemCard key={item.id} item={item} />
+            <ItemCard 
+              key={item.id} 
+              item={item} 
+              onPress={() => router.push(`../product/${item.id}`)} 
+            />
           ))}
         </ScrollView>
       </View>
@@ -160,23 +147,23 @@ const Home = () => {
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Quick Asks</Text>
-          <TouchableOpacity>
-            <Text 
-              style={styles.seeAllButton}
-              onPress={() => router.push(`../asks/quick-asks`)}
-            >See All</Text>
+          <TouchableOpacity onPress={() => router.push('../asks/quick-asks')}>
+            <Text style={styles.seeAllButton}>See All</Text>
           </TouchableOpacity>
         </View>
-
         <View style={styles.quickAsksContainer}>
           {requests.slice(0, 2).map(ask => (
-            <QuickAskCard key={ask.id} ask={ask} />
+            <QuickAskCard 
+              key={ask.id} 
+              ask={ask} 
+              onPress={() => router.push(`../../user/${ask.id}`)} 
+            />
           ))}
         </View>
       </View>
     </ScrollView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -207,29 +194,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingVertical: 12,
     color: '#333',
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    marginBottom: 30,
-  },
-  filterLabel: {
-    fontSize: 16,
-    color: '#666',
-    marginRight: 15,
-  },
-  filterPill: {
-    backgroundColor: '#A9DFBF',
-    borderRadius: 20,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    marginRight: 10,
-  },
-  filterText: {
-    color: '#333',
-    fontSize: 14,
-    fontWeight: '500',
   },
   section: {
     marginBottom: 30,
@@ -262,14 +226,9 @@ const styles = StyleSheet.create({
     marginRight: 10,
     padding: 15,
     justifyContent: 'flex-end',
-
     backgroundColor: 'white',
-
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 5,
@@ -288,25 +247,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
   },
-  itemTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 5,
-  },
   itemPrice: {
     fontSize: 16,
     color: '#666',
     marginBottom: 2,
-  },
-  itemSubtitle: {
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 2,
-  },
-  itemLocation: {
-    fontSize: 14,
-    color: '#888',
   },
   quickAsksContainer: {
     paddingHorizontal: 20,
@@ -318,10 +262,7 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 15,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 5,
@@ -376,6 +317,6 @@ const styles = StyleSheet.create({
     color: '#A9DFBF',
     fontWeight: '500',
   },
-})
+});
 
-export default Home
+export default Home;

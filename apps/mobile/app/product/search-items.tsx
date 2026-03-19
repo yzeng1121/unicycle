@@ -1,7 +1,16 @@
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image, TextInput } from 'react-native'
-import React, { useState, useEffect } from 'react'
-import { Ionicons } from '@expo/vector-icons'
-import { useRouter } from 'expo-router'
+import { 
+  View, 
+  Text, 
+  ScrollView, 
+  TouchableOpacity, 
+  StyleSheet, 
+  Image, 
+  TextInput, 
+  ActivityIndicator 
+} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useLocalSearchParams } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -19,9 +28,12 @@ type Item = {
 // TODO: add number of results + search bar at top
 const ProductGrid = () => {
   const { makeAuthenticatedRequest, user } = useAuth();
-  const [searchText, setSearchText] = useState('');
-  const [listings, setListings] = useState<any[]>([]);
   const { query } = useLocalSearchParams();
+
+  const [searchText, setSearchText] = useState(query as string || '');
+  const [listings, setListings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
   const router = useRouter()
 
   const NoResultsScreen: React.FC = () => (
@@ -43,52 +55,41 @@ const ProductGrid = () => {
     }
   }, [query, user?.userId]);
 
+  useEffect(() => {
+    if (query) {
+      setSearchText(query as string);
+    }
+  }, [query]);
+
   const handleNewSearch = async () => {
     if (searchText.trim()) {
-      // Update the internal state directly
-      // TODO: is it rlly necessary to have user id embedded in URL?
-      const newQuery = searchText.trim();
-      
-      try {
-        const response = await makeAuthenticatedRequest(
-          `http://13.221.95.208:8080/api/listings/search?userId=${user.userId}&query=${encodeURIComponent(newQuery)}`
-        );
-
-        if (response.ok) {
-          const results = await response.json();
-          setListings(results || []);
-        }
-      } catch (error) {
-        console.error('Search error:', error);
-        setListings([]);
-      }
+      router.setParams({ query: searchText.trim() });
     }
   };
 
   const getListings = async () => {
-     // TODO: query the database looking for specific keywords
-      // brand, title are main keywords to search for
+    // TODO: query the database looking for specific keywords
+    // brand, title are main keywords to search for
+    setLoading(true);
     try {
       // TODO: consider removing from the URL bc security issue
+      // TODO: is it necessary we have user id embedded into the api request
       const response = await makeAuthenticatedRequest(
-        `http://13.221.95.208:8080/api/listings/search?userId=${user.userId}&query=${encodeURIComponent(query)}`, {
-
-      });
-
+        `http://13.221.95.208:8080/api/listings/search?userId=${user.userId}&query=${encodeURIComponent(query)}`
+      );
       if (response.ok) {
         const results = await response.json();
-
-        // ✅ Just set the listings, don't return JSX here
         setListings(results || []);
       } else {
         console.error('Search failed:', response.status);
         setListings([]);
       }
-      
     } catch (error) {
       console.error('Search error:', error);
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   const ProductCard = ({ listing }) => (
     <TouchableOpacity 
@@ -132,8 +133,8 @@ const ProductGrid = () => {
         <View style={styles.searchBar}>
           <TextInput
             style={styles.searchInput}
-            placeholder={query}
-            placeholderTextColor="#333"
+            placeholder={"Search items, categories..."}
+            placeholderTextColor="#999"
             value={searchText}
             onChangeText={setSearchText}
             onSubmitEditing={handleNewSearch}     
@@ -159,7 +160,12 @@ const ProductGrid = () => {
       </View>
 
       {/* Product Grid */}
-      {listings.length === 0 ? (
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#ff6b6b" />
+          <Text style={styles.loadingText}>Searching...</Text>
+        </View>
+      ) : listings.length === 0 ? (
         <NoResultsScreen />
       ) : (
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.gridContainer}>
@@ -185,7 +191,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: 60,
-    paddingBottom: 20,
+    paddingBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
     backgroundColor: '#fff',
@@ -221,7 +227,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingVertical: 10,
   },
   backButton: {
     padding: 5,
@@ -258,7 +264,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   gridContainer: {
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 10,
   },
   grid: {
     flexDirection: 'row',
@@ -335,6 +342,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#999',
     textAlign: 'center',
+  },
+    loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: '#666',
   },
 })
 
